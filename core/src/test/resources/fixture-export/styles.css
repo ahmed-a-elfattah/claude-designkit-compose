@@ -1,0 +1,69 @@
+/* Design system stylesheet */
+:root {
+  --color-text-primary: #171717;
+  --color-text-muted: hsl(0 0% 45%);
+  --border: 220 13% 91%;
+  --color-success: rgb(22 163 74);
+  --space-xl: 2rem;
+  --font-mono: "JetBrains Mono", monospace;
+  --text-sm: 0.875rem;
+  --leading-sm: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #FAFAFA;
+    --border: 217 33% 17%;
+  }
+}
+
+.text-heading-lg {
+  font: 600 28px/36px Inter, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.btn {
+  border-radius: 10px;
+  padding: 10px 18px;
+  height: 44px;
+}
+
+.btn-primary {
+  background: var(--color-primary, #4F46E5);
+  color: #fff;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid hsl(var(--border));
+}
+
+.btn-primary:hover {
+  background: #4338CA;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  padding: 12px;
+}
+
+.input {
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  color: var(--color-text-primary);
+}
+
+.badge-success {
+  background: var(--color-success);
+  color: white;
+  border-radius: 9999px;
+  padding: 2px 8px;
+}

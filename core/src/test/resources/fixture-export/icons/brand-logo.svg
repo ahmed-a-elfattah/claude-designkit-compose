@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <g transform="translate(2 2)" style="fill:#4F46E5">
+    <rect x="0" y="0" width="28" height="28" rx="6" />
+    <circle cx="14" cy="14" r="6" fill="#ffffff" fill-opacity="0.9" />
+    <polyline points="8,20 14,8 20,20" fill="none" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" />
+  </g>
+</svg>

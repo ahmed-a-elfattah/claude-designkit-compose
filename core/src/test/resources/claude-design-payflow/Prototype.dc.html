@@ -1,0 +1,1216 @@
+<!doctype html>
+<meta charset="utf-8"><style data-dc-design-system-vars>@layer{:root{--brand-50:#eef0ff;--brand-100:#e0e2fd;--brand-200:#c3c6fb;--brand-500:#4f52e0;--brand-600:#3538cd;--brand-700:#2a2ca6;--brand-900:#1e2066;--primary:#3538cd;--primary-pressed:#2a2ca6;--on-primary:#ffffff;--primary-container:#e0e2fd;--on-primary-container:#1b1c63;--secondary:#0f766e;--on-secondary:#ffffff;--secondary-container:#e1f4f1;--bg:#f6f7f9;--surface:#ffffff;--surface-2:#f0f2f5;--surface-brand:#1e2066;--on-brand:#ffffff;--on-brand-muted:#c3c6f5;--text-primary:#0f1726;--text-secondary:#5a6475;--text-tertiary:#6b7485;--text-disabled:#a9b0bc;--border:#e3e6eb;--border-strong:#838c9b;--disabled-bg:#e9ecf0;--scrim:#0f172699;--focus-ring:#3538cd;--success:#0e7a4f;--success-container:#e3f5ec;--warning:#a3570a;--warning-container:#fdf1e1;--error:#c2352b;--error-container:#fce9e7;--info:#1d63b8;--info-container:#e6f0fb;--refund:#6e3fc2;--refund-container:#f1eafc;--neutral-status:#556072;--neutral-status-container:#edf0f3;--chart-1:#3538cd;--chart-2:#0f9488;--chart-3:#38a3e0;--chart-4:#a3acbb;--chart-grid:#edf0f3;--learn:#0f766e;--learn-container:#e1f4f1;--on-learn-container:#0b4f4a;--lab-secure:#0e7a4f;--lab-insecure:#c2352b;--progress-track:#e6e9ee;--elev-0:none;--elev-1:0 1px 2px rgba(15,23,38,0.06), 0 1px 3px rgba(15,23,38,0.08);--elev-2:0 4px 12px rgba(15,23,38,0.10);--elev-3:0 -4px 24px rgba(15,23,38,0.12);--space-0-5:2px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;--radius-xs:4px;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:28px;--radius-full:9999px;--size-control-lg:56px;--size-control:48px;--size-control-sm:36px;--size-chip:32px;--size-badge:24px;--size-icon:24px;--size-icon-sm:20px;--size-avatar:40px;--size-row:72px;--size-top-bar:64px;--size-bottom-nav:80px;--size-content-max:600px;--size-icon-lg:32px;--size-icon-xs:16px;--size-state-disc:64px;--size-module-row:80px;--size-method-option:64px;--size-progress-track:8px;--size-progress-ring:48px;--size-strip:32px;--font-sans:"IBM Plex Sans Arabic", "IBM Plex Sans", system-ui, sans-serif;--font-mono:"IBM Plex Mono", ui-monospace, monospace;--text-amount-xl:600 36px/44px var(--font-sans);--text-amount-lg:600 24px/32px var(--font-sans);--text-amount-md:600 16px/24px var(--font-sans);--text-amount-sm:500 14px/20px var(--font-sans);--text-headline-lg:600 28px/36px var(--font-sans);--text-headline-md:600 24px/32px var(--font-sans);--text-title-lg:600 20px/28px var(--font-sans);--text-title-md:600 16px/24px var(--font-sans);--text-title-sm:600 14px/20px var(--font-sans);--text-body-lg:400 16px/24px var(--font-sans);--text-body-md:400 14px/20px var(--font-sans);--text-body-sm:400 12px/16px var(--font-sans);--text-label-lg:500 14px/20px var(--font-sans);--text-label-md:500 12px/16px var(--font-sans);--text-label-sm:500 11px/16px var(--font-sans);--text-mono-sm:400 12px/16px var(--font-mono);}}</style>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PayFlow prototype · Phase 1 payments</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="payflow.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Mono&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=swap">
+<style>
+body{margin:0}
+button{font-family:inherit}
+button:disabled{opacity:.45;cursor:not-allowed}
+@keyframes pfspin{to{transform:rotate(360deg)}}
+.pf-spin{animation:pfspin .9s linear infinite}
+.pf-badge.b-refund{background:var(--refund-container, #E0E7FF);color:var(--on-refund-container, #3730A3)}
+:root{--on-refund-container:#3730A3}
+[data-theme="dark"]{--on-refund-container:#C7D2FE}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--on-refund-container:#C7D2FE}}
+</style>
+</helmet>
+<div dir="{{dir}}" lang="{{locale}}" data-theme="{{mode}}" style="width: 1280px; height: 960px; box-sizing: border-box; padding: 24px; display: flex; gap: 24px; background: var(--bg); color: var(--text-primary); font-family: var(--font-sans);">
+
+<aside style="width: 300px; flex: none; display: flex; flex-direction: column; gap: 14px;">
+<div>
+<div class="pf-eyebrow">PayFlow · interactive prototype</div>
+<h1 style="margin: 4px 0 0; font: 600 22px/30px var(--font-sans);">{{t.title}}</h1>
+<p class="pf-cap" style="margin: 6px 0 0;">{{t.intro}}</p>
+</div>
+<section class="pf-card" style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+<div>
+<div class="pf-cap">{{t.lang}}</div>
+<div style="display: flex; gap: 6px; margin-top: 6px;">
+<sc-for list="{{locales}}" as="o" hint-placeholder-count="2"><button style="{{o.style}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+</div>
+<div>
+<div class="pf-cap">{{t.theme}}</div>
+<div style="display: flex; gap: 6px; margin-top: 6px;">
+<sc-for list="{{modes}}" as="o" hint-placeholder-count="2"><button style="{{o.style}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+</div>
+<div>
+<div class="pf-cap">{{t.device}}</div>
+<div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+<sc-for list="{{devices}}" as="o" hint-placeholder-count="2"><button style="{{o.style}}" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+<div class="pf-cap" style="margin-top: 6px;">{{t.deviceNote}}</div>
+</div>
+<button class="pf-btn text sm" onClick="{{reset}}" style="align-self: flex-start; padding: 0 8px;">{{t.reset}}</button>
+</section>
+<section class="pf-card" style="padding: 14px; display: flex; flex-direction: column; gap: 8px; font: 400 12px/16px var(--font-sans);">
+<div class="pf-eyebrow">{{t.insTitle}}</div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insScreen}}</span><span>{{screenTitle}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insTx}}</span><span class="tnum">{{insTx}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insNew}}</span><span class="tnum">{{insNew}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insSales}}</span><span class="tnum">{{sales}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insKeys}}</span><span class="tnum">{{insKeys}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.insLast}}</span><span class="tnum" style="direction: ltr;">{{insLast}}</span></div>
+<div class="pf-cap" style="margin-top: 4px;">{{t.insNote}}</div>
+</section>
+</aside>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 12px;">
+<div class="pf-screen" style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; border-radius: 36px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--border), 0 12px 32px rgba(0,0,0,.12);">
+
+<sc-if value="{{homeBar}}" hint-placeholder-val="{{true}}">
+<header class="pf-topbar" style="flex: none;">
+<button class="pf-avatar" aria-label="{{t.profile}}">AA</button>
+<div style="flex: 1; margin-inline-start: 12px; min-width: 0;">
+<div style="font: 600 16px/24px var(--font-sans);">{{t.greeting}}</div>
+<div style="font: 400 12px/16px var(--font-sans); color: var(--text-secondary);">{{t.merchant}}</div>
+</div>
+</header>
+</sc-if>
+<sc-if value="{{hasBack}}" hint-placeholder-val="{{false}}">
+<header class="pf-topbar" style="flex: none;">
+<button class="pf-iconbtn" onClick="{{goBack}}" aria-label="{{t.back}}"><span class="ms" aria-hidden="true">{{backIcon}}</span></button>
+<div style="flex: 1; margin-inline-start: 8px; font: 600 16px/24px var(--font-sans);">{{screenTitle}}</div>
+</header>
+</sc-if>
+<sc-if value="{{titleBar}}" hint-placeholder-val="{{false}}">
+<header class="pf-topbar" style="flex: none;">
+<div style="flex: 1; font: 600 16px/24px var(--font-sans);">{{screenTitle}}</div>
+</header>
+</sc-if>
+
+<div class="pf-strip sim" style="flex: none;"><span class="ms xs" aria-hidden="true">science</span>{{t.sim}} · {{ctxLabel}}</div>
+
+<main style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 16px;">
+
+<sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<nav aria-label="{{t.quick}}" style="display: flex; gap: 4px;">
+<sc-for list="{{actions}}" as="qa" hint-placeholder-count="4"><button class="pf-qa" disabled="{{qa.disabled}}" onClick="{{qa.pick}}"><span class="disc"><span class="ms" aria-hidden="true">{{qa.icon}}</span></span>{{qa.label}}</button></sc-for>
+</nav>
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+<span class="pf-eyebrow">{{t.activity}}</span>
+<div class="tnum" style="font: 600 36px/44px var(--font-sans); letter-spacing: -0.5px; direction: ltr; unicode-bidi: isolate; text-align: start;">{{sales}}</div>
+<div class="pf-cap">{{sessionNote}}</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<sc-for list="{{stats}}" as="st" hint-placeholder-count="3"><div style="background: var(--surface-2); border-radius: 12px; padding: 8px 12px;"><div class="tnum" style="font: 600 20px/28px var(--font-sans); color: {{st.color}};">{{st.value}}</div><div class="pf-cap">{{st.label}}</div></div></sc-for>
+</div>
+<div style="box-shadow: inset 0 1px 0 var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; font: 400 14px/20px var(--font-sans);">
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.settling}}</span><span class="tnum" style="font-weight: 500; direction: ltr; unicode-bidi: isolate;">{{settling}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.available}}</span><span class="tnum" style="font-weight: 500; direction: ltr; unicode-bidi: isolate;">{{available}}</span></div>
+</div>
+</section>
+<aside class="pf-learn"><span class="ms" aria-hidden="true">lightbulb</span><div><b>{{callout.lead}}</b> {{callout.body}}</div></aside>
+<section style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; align-items: center; justify-content: space-between; min-height: 40px;"><h2 class="pf-h" style="margin: 0;">{{t.recent}}</h2><button class="pf-btn text sm" onClick="{{goTx}}" style="padding: 0 8px;">{{t.seeAll}}</button></div>
+<div class="pf-card" style="overflow: hidden;">
+<sc-for list="{{recentRows}}" as="r" hint-placeholder-count="4"><div class="pf-row"><span class="pf-disc"><span class="ms sm" aria-hidden="true">{{r.icon}}</span></span><span class="main"><span class="t" style="display: block;">{{r.title}}</span><span class="s" style="display: block;">{{r.sub}}</span></span><span class="end"><span class="amt">{{r.amt}}</span><span class="pf-badge b-{{r.kind}}"><span class="ms" aria-hidden="true">{{r.bicon}}</span>{{r.label}}</span></span></div></sc-for>
+</div>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{isHub}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<p class="pf-cap" style="margin: 0;">{{t.hubIntro}}</p>
+<sc-for list="{{methods}}" as="mt" hint-placeholder-count="4">
+<button style="{{mt.style}}" onClick="{{mt.pick}}"><span class="pf-disc"><span class="ms" aria-hidden="true">{{mt.icon}}</span></span><span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 16px/24px var(--font-sans);">{{mt.name}}</span><span class="pf-cap" style="display: block;">{{mt.sub}}</span></span><span class="ms xs" aria-hidden="true">chevron_right</span></button>
+</sc-for>
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">shield</span><div>{{t.hubGuard}}</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isAmt}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<div style="text-align: center; padding: 8px 0 4px;">
+<div class="pf-cap">{{mName}} · {{t.amtLabel}}</div>
+<div class="tnum" style="font: 600 40px/48px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{amtShown}}</div>
+<div role="status" style="min-height: 20px; font: 400 14px/20px var(--font-sans); color: var(--error);">{{amtErr}}</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+<sc-for list="{{keys}}" as="k" hint-placeholder-count="12"><button aria-label="{{k.aria}}" style="{{k.style}}" onClick="{{k.pick}}">{{k.v}}</button></sc-for>
+</div>
+<label class="pf-cap" style="display: flex; flex-direction: column; gap: 6px;">{{t.refLabel}}
+<input type="text" value="{{s.ref}}" onChange="{{onRef}}" maxlength="40" placeholder="{{t.refPh}}" style="height: 44px; box-sizing: border-box; border: 0; border-radius: 12px; padding: 0 12px; background: var(--surface); color: var(--text-primary); font: 400 16px/24px var(--font-sans); box-shadow: inset 0 0 0 1px var(--border);">
+</label>
+<button class="pf-btn primary" style="width: 100%;" disabled="{{amtNotOk}}" onClick="{{goDetail}}">{{t.cont}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isDet}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<sc-if value="{{dCard}}" hint-placeholder-val="{{false}}">
+<div class="pf-eyebrow">{{t.testCards}}</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{cardOpts}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.pressed}}" style="{{c.style}}" onClick="{{c.pick}}">{{c.label}}</button></sc-for>
+</div>
+<div class="pf-eyebrow">{{t.capMode}}</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{capOpts}}" as="c" hint-placeholder-count="2"><button aria-pressed="{{c.pressed}}" style="{{c.style}}" onClick="{{c.pick}}">{{c.label}}</button></sc-for>
+</div>
+<div class="pf-eyebrow">{{t.simOutcome}}</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{scenOpts}}" as="c" hint-placeholder-count="3"><button aria-pressed="{{c.pressed}}" style="{{c.style}}" onClick="{{c.pick}}">{{c.label}}</button></sc-for>
+</div>
+<div class="pf-cap" style="background: var(--surface-2); border-radius: 12px; padding: 12px;">{{t.cardGuard}}</div>
+</sc-if>
+<sc-if value="{{dPush}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; font: 400 14px/22px var(--font-sans);">{{t.pushInfo}}</section>
+</sc-if>
+<sc-if value="{{dCash}}" hint-placeholder-val="{{false}}">
+<label style="display: flex; gap: 12px; align-items: flex-start; font: 500 16px/24px var(--font-sans);"><input type="checkbox" checked="{{cashOk}}" onChange="{{toggleCash}}" style="width: 20px; height: 20px; margin-top: 1px;"><span>{{t.cashCheck}}</span></label>
+<div class="pf-cap">{{t.cashNote}}</div>
+</sc-if>
+<button class="pf-btn primary" style="width: 100%;" disabled="{{detailNotOk}}" onClick="{{goConfirm}}">{{t.cont}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isConf}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px; font: 400 14px/20px var(--font-sans);">
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.cMethod}}</span><span>{{mName}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.cCustomer}}</span><span>{{cCustomer}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.cRef}}</span><span>{{refShown}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px;"><span style="color: var(--text-secondary);">{{t.cMode}}</span><span>{{scenLabel}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 8px; box-shadow: inset 0 1px 0 var(--border); padding-top: 10px;"><span style="font-weight: 600;">{{t.total}}</span><span class="tnum" style="font: 600 20px/28px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{amtShown}}</span></div>
+</section>
+<div style="background: var(--surface-2); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;">
+<span class="pf-eyebrow">Idempotency-Key</span>
+<span style="font: 500 14px/20px 'IBM Plex Mono', monospace; direction: ltr; unicode-bidi: isolate;">{{keyShown}}</span>
+<span class="pf-cap">{{t.keyNote}}</span>
+</div>
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">fingerprint</span><div>{{t.idExplain}}</div></div>
+<div class="pf-cap" style="display: flex; flex-direction: column; gap: 2px;"><span>{{t.ruleKey}}</span><span>{{t.ruleAtt}}</span><span>{{t.ruleTx}}</span></div>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{pay}}">{{payLabel}}</button>
+<button class="pf-btn text" style="width: 100%;" onClick="{{goBack}}">{{t.edit}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isProc}}" hint-placeholder-val="{{false}}">
+<div role="status" aria-live="polite" style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 56px 16px; text-align: center;">
+<div class="pf-spin" style="width: 48px; height: 48px; border-radius: 50%; box-shadow: inset 0 0 0 4px var(--progress-track, #E2E8F0), inset 0 4px 0 4px var(--primary);"></div>
+<div style="font: 500 16px/24px var(--font-sans);">{{t.processing}}</div>
+<div style="font: 500 14px/20px 'IBM Plex Mono', monospace; direction: ltr;">{{keyShown}}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isWait}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+<span class="ms" aria-hidden="true" style="font-size: 40px; color: var(--warning);">schedule</span>
+<div class="pf-h">{{t.waitTitle}}</div>
+<div class="pf-cap">{{t.waitBody}}</div>
+<div class="tnum" style="font: 600 28px/36px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{amtShown}}</div>
+<div class="pf-cap">{{t.waitTimer}}</div>
+</section>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{approve}}">{{t.simApprove}}</button>
+<button class="pf-btn" style="width: 100%;" onClick="{{expire}}">{{t.simExpire}}</button>
+<button class="pf-btn text" style="width: 100%;" onClick="{{cancel}}">{{t.cancelReq}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isRes}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<sc-if value="{{dupShown}}" hint-placeholder-val="{{false}}">
+<div role="status" class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">content_copy</span><div>{{t.dupBanner}}</div></div>
+</sc-if>
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+<span style="width: 56px; height: 56px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: {{rcBg}}; color: {{rcFg}};"><span class="ms" aria-hidden="true" style="font-size: 30px;">{{rsIcon}}</span></span>
+<div class="pf-eyebrow">{{rsLabel}}</div>
+<div class="tnum" style="font: 600 32px/40px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{resAmt}}</div>
+<div class="pf-cap">{{resMsg}}</div>
+<div style="font: 500 12px/18px 'IBM Plex Mono', monospace; direction: ltr; color: var(--text-tertiary); display: flex; flex-direction: column; gap: 2px;"><span>{{t.idTx}} · {{resId}}</span><span>{{t.idKey}} · {{keyShown}}</span><span>{{t.idAtt}} · {{attShown}}</span></div>
+</section>
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.lifecycle}}</div>
+<sc-for list="{{stepsR}}" as="st" hint-placeholder-count="4">
+<div style="display: flex; align-items: flex-start; gap: 10px; font: 400 14px/20px var(--font-sans);"><span class="ms xs" aria-hidden="true" style="color: {{st.color}}; margin-top: 2px;">{{st.icon}}</span><span>{{st.text}}</span></div>
+</sc-for>
+</section>
+<sc-if value="{{showTm}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.tmTitle}}</div>
+<sc-for list="{{tmRows}}" as="tr" hint-placeholder-count="5"><div style="font: 400 14px/20px var(--font-sans);">{{tr.text}}</div></sc-for>
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">lightbulb</span><div>{{t.tmHttp}}</div></div>
+<div class="pf-cap">{{t.tmWhy}}</div>
+</section>
+<div class="pf-cap">{{t.inqLearn}}</div>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{inquire}}">{{t.inqBtn}}</button>
+</sc-if>
+<sc-if value="{{showLog}}" hint-placeholder-val="{{false}}"><div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">history</span><div>{{inqLog}}</div></div></sc-if>
+<sc-if value="{{canCapture}}" hint-placeholder-val="{{false}}">
+<button class="pf-btn primary" style="width: 100%;" onClick="{{goCapture}}">{{t.capture}}</button>
+</sc-if>
+<sc-if value="{{failRes.show}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+<div class="pf-eyebrow">{{t.whatNext}}</div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fRetry}}: <b>{{failRes.rT}}</b></div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fNew}}: <b>{{failRes.rN}}</b></div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fInq}}: <b>{{failRes.rI}}</b></div>
+<details><summary class="pf-cap" style="cursor: pointer;">{{t.devInfo}}</summary><div style="font: 500 12px/16px 'IBM Plex Mono', monospace; direction: ltr; color: var(--text-secondary); padding-top: 6px;">{{failRes.code}}</div></details>
+</section>
+</sc-if>
+<sc-if value="{{canSameKey}}" hint-placeholder-val="{{false}}">
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">repeat</span><div>{{t.sameKeyNote}}</div></div>
+<button class="pf-btn" style="width: 100%;" onClick="{{retry}}">{{t.retryBtn}}</button>
+</sc-if>
+<sc-if value="{{canNewRes}}" hint-placeholder-val="{{false}}">
+<div class="pf-cap">{{t.scenBNote}}</div>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{goPay}}">{{t.startNew}}</button>
+</sc-if>
+<button class="pf-btn" style="width: 100%;" onClick="{{viewTx}}">{{t.viewTx}}</button>
+<button class="pf-btn text" style="width: 100%;" onClick="{{done}}">{{t.done}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isCap}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
+<div class="pf-eyebrow">{{t.capHead}}</div>
+<div class="tnum" style="font: 600 32px/40px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{capAuth}}</div>
+</section>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{capFull}}">{{capFullLabel}}</button>
+<button class="pf-btn" style="width: 100%;" onClick="{{capHalf}}">{{capHalfLabel}}</button>
+<p class="pf-cap" style="margin: 0;">{{t.capNote}}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isTx}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<p class="pf-cap" style="margin: 0;">{{t.txIntro}}</p>
+<div style="display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent);">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="6"><button aria-pressed="{{f.pressed}}" style="{{f.style}}" onClick="{{f.pick}}">{{f.label}}</button></sc-for>
+</div>
+<div style="display: flex; gap: 8px;">
+<button class="pf-btn sm" style="flex: 1;" onClick="{{goSettle}}">{{t.navSettle}}</button>
+<button class="pf-btn sm" style="flex: 1;" onClick="{{goRecon}}">{{t.navRecon}}</button>
+</div>
+<div class="pf-card" style="overflow: hidden;">
+<sc-for list="{{listRows}}" as="r" hint-placeholder-count="4"><button style="{{rowBtn}}" onClick="{{r.open}}"><span class="pf-disc"><span class="ms sm" aria-hidden="true">{{r.icon}}</span></span><span style="flex: 1; min-width: 0;"><span style="display: block;">{{r.title}}</span><span class="pf-cap" style="display: block;">{{r.sub}}</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;"><span class="tnum">{{r.amt}}</span><span class="pf-badge b-{{r.kind}}"><span class="ms" aria-hidden="true">{{r.bicon}}</span>{{r.label}}</span></span></button></sc-for>
+</div>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{false}}"><p class="pf-cap" style="margin: 0;">{{t.txEmpty}}</p></sc-if>
+<p class="pf-cap" style="margin: 0;">{{t.txFoot}}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isTxd}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
+<div class="pf-cap">{{dTitle}}</div>
+<div class="tnum" style="font: 600 32px/40px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{dAmt}}</div>
+<span class="pf-badge b-{{dKind}}"><span class="ms" aria-hidden="true">{{dIcon}}</span>{{dLabel}}</span>
+<div style="font: 500 12px/16px 'IBM Plex Mono', monospace; direction: ltr; color: var(--text-tertiary);">{{dId}} · {{dKey}}</div>
+</section>
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.tlTitle}}</div>
+<sc-for list="{{tlR}}" as="st" hint-placeholder-count="4"><div style="display: flex; align-items: flex-start; gap: 10px; font: 400 14px/20px var(--font-sans);"><span class="ms xs" aria-hidden="true" style="color: {{st.color}}; margin-top: 2px;">{{st.icon}}</span><span>{{st.text}}</span></div></sc-for>
+</section>
+<sc-if value="{{failDet.show}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+<div class="pf-eyebrow">{{t.whatNext}}</div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fRetry}}: <b>{{failDet.rT}}</b></div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fNew}}: <b>{{failDet.rN}}</b></div>
+<div style="font: 400 14px/20px var(--font-sans);">{{t.fInq}}: <b>{{failDet.rI}}</b></div>
+<details><summary class="pf-cap" style="cursor: pointer;">{{t.devInfo}}</summary><div style="font: 500 12px/16px 'IBM Plex Mono', monospace; direction: ltr; color: var(--text-secondary); padding-top: 6px;">{{failDet.code}}</div></details>
+</section>
+</sc-if>
+<sc-if value="{{showTmD}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.tmTitle}}</div>
+<sc-for list="{{tmRows}}" as="tr" hint-placeholder-count="5"><div style="font: 400 14px/20px var(--font-sans);">{{tr.text}}</div></sc-for>
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">lightbulb</span><div>{{t.tmHttp}}</div></div>
+<div class="pf-cap">{{t.tmWhy}}</div>
+</section>
+<div class="pf-cap">{{t.inqLearn}}</div>
+<button class="pf-btn primary" style="width: 100%;" onClick="{{inquire}}">{{t.inqBtn}}</button>
+</sc-if>
+<sc-if value="{{showLogD}}" hint-placeholder-val="{{false}}"><div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">history</span><div>{{inqLogD}}</div></div></sc-if>
+<sc-if value="{{hasRefunds}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.refundsTitle}}</div>
+<sc-for list="{{refundRows}}" as="r" hint-placeholder-count="2"><div style="display: flex; flex-direction: column; gap: 6px; font: 400 14px/20px var(--font-sans);"><span><span class="tnum">{{r.amt}}</span> · {{r.label}}</span><span style="{{r.btnRow}}"><button class="pf-btn sm" disabled="{{r.notPending}}" onClick="{{r.ok}}">{{t.simRefundOk}}</button><button class="pf-btn sm" disabled="{{r.notPending}}" onClick="{{r.no}}">{{t.simRefundFail}}</button></span></div></sc-for>
+</section>
+</sc-if>
+<sc-if value="{{canRefund}}" hint-placeholder-val="{{false}}"><button class="pf-btn primary" style="width: 100%;" onClick="{{goRefund}}">{{t.detRefund}}</button></sc-if>
+<sc-if value="{{canVoid}}" hint-placeholder-val="{{false}}"><button class="pf-btn" style="width: 100%;" onClick="{{voidAuth}}">{{voidLabel}}</button></sc-if>
+<sc-if value="{{canCapt}}" hint-placeholder-val="{{false}}"><button class="pf-btn" style="width: 100%;" onClick="{{goCapture}}">{{t.capture}}</button></sc-if>
+<sc-if value="{{canNewD}}" hint-placeholder-val="{{false}}"><button class="pf-btn" style="width: 100%;" onClick="{{goPay}}">{{t.startNew}}</button></sc-if>
+<button class="pf-btn text" style="width: 100%;" onClick="{{explainTx}}">{{t.explain}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isRf}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+<div class="pf-cap">{{dTitle}}</div>
+<div style="display: flex; flex-direction: column; gap: 4px; font: 400 14px/20px var(--font-sans);">
+<div>{{t.rfCaptured}}: <span class="tnum">{{rfCapturedShown}}</span></div>
+<div>{{t.rfDoneLabel}}: <span class="tnum">{{rfDoneShown}}</span></div>
+<div>{{t.rfHeldLabel}}: <span class="tnum">{{rfHeldShown}}</span></div>
+<div>{{t.rfLatestLabel}}: {{rfLatestShown}}</div>
+</div>
+<div style="font: 600 16px/24px var(--font-sans);">{{t.rfRemain}}: <span class="tnum">{{rfRemainShown}}</span></div>
+<div class="pf-cap">{{t.rfHold}}</div>
+</section>
+<div class="pf-eyebrow">{{t.rfAmtLabel}}</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{rfOpts}}" as="o" hint-placeholder-count="2"><button aria-pressed="{{o.pressed}}" style="{{o.style}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+<div class="pf-eyebrow">{{t.rfReasonLabel}}</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{rfReasons}}" as="o" hint-placeholder-count="3"><button aria-pressed="{{o.pressed}}" style="{{o.style}}" onClick="{{o.pick}}">{{o.label}}</button></sc-for>
+</div>
+<div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">info</span><div>{{rfWarn}}</div></div>
+<sc-if value="{{rfErrShow}}" hint-placeholder-val="{{false}}"><div role="alert" class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">error</span><div>{{rfErr}}</div></div></sc-if>
+<button class="pf-btn primary" style="width: 100%;" disabled="{{rfDisabled}}" onClick="{{submitRefund}}">{{rfSubmitLabel}}</button>
+<sc-if value="{{rfArmed}}" hint-placeholder-val="{{false}}"><div class="pf-cap">{{confirmRefundNote}}</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isSettle}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<section class="pf-card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+<div class="pf-eyebrow">{{t.batchTitle}}</div>
+<div class="tnum" style="font: 600 28px/36px var(--font-sans); direction: ltr; unicode-bidi: isolate;">{{netToday}}</div>
+<div class="pf-cap">{{t.batchNote}}</div>
+</section>
+<sc-for list="{{batch}}" as="b" hint-placeholder-count="3"><div style="display: flex; justify-content: space-between; gap: 8px; font: 400 14px/20px var(--font-sans);"><span>{{b.text}}</span><span class="tnum">{{b.amt}}</span></div></sc-for>
+<sc-if value="{{noBatch}}" hint-placeholder-val="{{false}}"><p class="pf-cap" style="margin: 0;">{{t.batchEmpty}}</p></sc-if>
+<p class="pf-cap" style="margin: 0;">{{t.cashExcluded}}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isRecon}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<p class="pf-cap" style="margin: 0;">{{t.reconIntro}}</p>
+<sc-if value="{{hasRecon}}" hint-placeholder-val="{{false}}">
+<sc-for list="{{reconRows}}" as="r" hint-placeholder-count="2"><section class="pf-card" style="padding: 14px; display: flex; flex-direction: column; gap: 8px;"><div style="font: 600 16px/24px var(--font-sans);">{{r.title}}</div><div class="pf-cap">{{r.sub}}</div><div style="display: flex; gap: 8px;"><button class="pf-btn sm" onClick="{{r.ok}}">{{t.reconYes}}</button><button class="pf-btn sm" onClick="{{r.no}}">{{t.reconNo}}</button></div></section></sc-for>
+</sc-if>
+<sc-if value="{{noRecon}}" hint-placeholder-val="{{false}}"><section class="pf-card" style="padding: 14px;"><div class="pf-cap">{{t.reconEmpty}}</div></section></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isLearn}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; gap: 8px; flex-wrap: wrap;"><sc-for list="{{lessonTabs}}" as="lt" hint-placeholder-count="2"><button aria-pressed="{{lt.pressed}}" onClick="{{lt.pick}}" style="{{lt.style}}">{{lt.label}}</button></sc-for></div>
+<sc-if value="{{isFin}}" hint-placeholder-val="{{true}}">
+<p class="pf-cap" style="margin: 0;">{{t.finIntro}}</p>
+<section class="pf-card" style="padding: 0; overflow: hidden;"><sc-for list="{{trackRows}}" as="tr" hint-placeholder-count="4"><button onClick="{{tr.pick}}" style="{{rowBtn}}"><span class="ms" aria-hidden="true" style="color: var(--learn, var(--primary));">{{tr.icon}}</span><span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 16px/24px var(--font-sans);">{{tr.title}}</span><span class="pf-cap" style="display: block;">{{tr.sub}}</span></span><span class="ms" aria-hidden="true">{{tr.chev}}</span></button></sc-for></section>
+<div style="display: flex; gap: 8px;"><button class="pf-btn primary" onClick="{{openQuizLearn}}">{{t.quizCta}}</button><button class="pf-btn" onClick="{{openGlossLearn}}">{{t.glossCta}}</button></div>
+</sc-if>
+<sc-if value="{{isSec}}" hint-placeholder-val="{{false}}">
+<p class="pf-cap" style="margin: 0;">{{t.secIntro}}</p>
+<section class="pf-card" style="padding: 0; overflow: hidden;"><sc-for list="{{expRows}}" as="er" hint-placeholder-count="5"><button onClick="{{er.pick}}" style="{{rowBtn}}"><span style="flex: 1; min-width: 0;"><span class="pf-cap" style="display: block;">{{er.cat}}</span><span style="display: block; font: 600 16px/24px var(--font-sans);">{{er.title}}</span></span><span class="{{er.tagCls}}">{{er.tag}}</span></button></sc-for></section>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isLesson}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; gap: 8px; flex-wrap: wrap;"><sc-for list="{{lessonChips}}" as="lc" hint-placeholder-count="4"><button aria-pressed="{{lc.pressed}}" onClick="{{lc.pick}}" style="{{lc.style}}">{{lc.label}}</button></sc-for></div>
+<section class="pf-card" style="padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-h">{{lesson.title}}</div>
+<sc-if value="{{lesson.fromTxShow}}" hint-placeholder-val="{{false}}"><div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">receipt_long</span><div>{{lesson.fromTx}}</div></div></sc-if>
+<sc-for list="{{lesson.body}}" as="lb" hint-placeholder-count="2"><p class="pf-cap" style="margin: 0; color: var(--text-primary);">{{lb.text}}</p></sc-for>
+</section>
+<section class="pf-card" style="padding: 14px; display: flex; flex-direction: column; gap: 8px;"><sc-for list="{{lesson.diagram}}" as="ld" hint-placeholder-count="4"><div style="font: 500 14px/20px var(--font-sans); padding: 10px 12px; border-radius: 10px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border);">{{ld.text}}</div></sc-for></section>
+<div style="display: flex; gap: 8px;"><button class="pf-btn primary" onClick="{{lesson.quizGo}}">{{t.quizCta}}</button><button class="pf-btn" onClick="{{lesson.glossGo}}">{{t.glossCta}}</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isQuiz}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<sc-if value="{{quizDone}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px;"><div class="pf-eyebrow">{{t.quizTitle}}</div><div class="pf-h">{{scoreText}}</div><p class="pf-cap" style="margin: 0;">{{t.quizDoneBody}}</p><div><button class="pf-btn primary" onClick="{{restartQuiz}}">{{t.quizRetake}}</button></div></section>
+</sc-if>
+<sc-if value="{{quizActive}}" hint-placeholder-val="{{true}}">
+<section class="pf-card" style="padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+<div class="pf-eyebrow">{{qProg}}</div>
+<div class="pf-h">{{qText}}</div>
+<sc-for list="{{qOpts}}" as="qo" hint-placeholder-count="3"><button onClick="{{qo.pick}}" style="{{qo.style}}">{{qo.label}}</button></sc-for>
+<sc-if value="{{qShowFb}}" hint-placeholder-val="{{false}}"><div role="status" class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">{{qFbIcon}}</span><div>{{qFeedback}}</div></div><div><button class="pf-btn primary" onClick="{{nextQ}}">{{qNextLabel}}</button></div></sc-if>
+</section>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isGloss}}" hint-placeholder-val="{{false}}">
+<section class="pf-card" style="padding: 0; overflow: hidden;"><sc-for list="{{glossRows}}" as="g" hint-placeholder-count="6"><div style="padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px;"><div style="font: 600 16px/24px var(--font-sans);">{{g.term}}</div><div class="pf-cap">{{g.def}}</div></div></sc-for></section>
+</sc-if>
+
+<sc-if value="{{isExp}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<section class="pf-card" style="padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{expCat}}</div>
+<div class="pf-h">{{expTitle}}</div>
+<div><span class="{{expTagCls}}">{{expTag}}</span></div>
+<p class="pf-cap" style="margin: 0; color: var(--text-primary);">{{expWhy}}</p>
+</section>
+<sc-if value="{{expToggleable}}" hint-placeholder-val="{{true}}">
+<section class="pf-card" style="padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;"><span style="font: 600 16px/24px var(--font-sans);">{{expControl}}</span><button aria-pressed="{{expOn}}" onClick="{{expFlip}}" class="{{expBtnCls}}">{{expOnLabel}}</button></section>
+</sc-if>
+<section class="pf-card" style="padding: 14px; display: flex; flex-direction: column; gap: 6px;"><div class="pf-eyebrow">{{t.outcome}}</div><div style="font: 500 16px/24px var(--font-sans);">{{expOutcome}}</div></section>
+<sc-if value="{{expHasNote}}" hint-placeholder-val="{{false}}"><div class="pf-learn" style="align-items: flex-start;"><span class="ms" aria-hidden="true">info</span><div>{{expNote}}</div></div></sc-if>
+</div>
+</sc-if>
+
+</main>
+
+<sc-if value="{{showNav}}" hint-placeholder-val="{{true}}">
+<nav class="pf-nav" aria-label="{{t.navAria}}" style="flex: none;">
+<sc-for list="{{navItems}}" as="n" hint-placeholder-count="4"><button class="it {{n.cls}}" aria-current="{{n.current}}" onClick="{{n.pick}}" style="background: none; border: 0; font: inherit; color: inherit; cursor: pointer;"><span class="pill"><span class="ms" aria-hidden="true">{{n.icon}}</span></span>{{n.label}}</button></sc-for>
+</nav>
+</sc-if>
+
+</div>
+</div>
+
+<aside style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+<div class="pf-eyebrow">{{t.mapTitle}}</div>
+<p class="pf-cap" style="margin: 0;">{{t.mapIntro}}</p>
+<p class="pf-cap" style="margin: 0;">{{t.legend}}</p>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{flow}}" as="f" hint-placeholder-count="11">
+<li style="{{f.style}} cursor: pointer;" onClick="{{f.pick}}"><span class="tnum" style="font: 600 14px/20px var(--font-sans); width: 22px; flex: none;">{{f.n}}</span><span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 14px/20px var(--font-sans);">{{f.name}}</span><span class="pf-cap" style="display: block;">{{f.note}}</span></span><span class="ms" aria-hidden="true" style="{{f.stStyle}}">{{f.st}}</span><span class="pf-cap" style="flex: none;">{{f.here}}</span></li>
+</sc-for>
+</ol>
+<div class="pf-card" style="padding: 12px 14px; font: 400 14px/20px var(--font-sans);">
+<b style="font-weight: 600;">{{t.notYet}}</b>
+<div class="pf-cap">{{t.notYetBody}}</div>
+</div>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  CARD = {
+    visa: { en: 'Visa •• 4242', ar: 'فيزا •• 4242' },
+    mc: { en: 'Mastercard •• 4417', ar: 'ماستركارد •• 4417' },
+    meeza: { en: 'Meeza •• 2093', ar: 'ميزة •• 2093' },
+  };
+  RS = {
+    funds: { en: 'Declined · insufficient funds (simulated). No money moved.', ar: 'مرفوضة · رصيد غير كافٍ (محاكاة). لم تُحرَّك أي أموال.' },
+    timeout: { en: 'Gateway timeout · status unknown. Do not charge again; reconciliation resolves it.', ar: 'انتهت مهلة البوابة · الحالة غير معروفة. لا تُعِد الخصم؛ المطابقة تحسمها.' },
+    expired: { en: 'The customer did not approve in time (simulated 2:00 limit). No money moved.', ar: 'لم يوافق العميل في الوقت المحدد (حد محاكاة ٢:٠٠). لم تُحرَّك أي أموال.' },
+    cancelled: { en: 'Cancelled by the merchant. No money moved.', ar: 'ألغاه التاجر. لم تُحرَّك أي أموال.' },
+  };
+  FAILDEF = {
+    funds: { code: 'card_declined · insufficient_funds (simulated)', retry: true, newAttempt: true, inquiry: false },
+    cancelled: { code: 'merchant_cancelled · wallet request cancelled (simulated)', retry: false, newAttempt: true, inquiry: false },
+    expired: { code: 'request_expired · approval window elapsed (simulated)', retry: true, newAttempt: true, inquiry: false },
+    timeout: { code: 'gateway_timeout · outcome_unknown (simulated)', retry: false, newAttempt: false, inquiry: true },
+    gateway: { code: 'gateway_confirmed · not_captured (simulated)', retry: true, newAttempt: true, inquiry: false },
+    released: { code: 'authorization_released · nothing_captured (simulated)', retry: true, newAttempt: true, inquiry: false },
+  };
+  SANDBOX = {
+    wallet: { en: 'Wallet · test customer', ar: 'محفظة · عميل تجريبي' },
+    instapay: { en: 'InstaPay · test customer', ar: 'إنستاباي · عميل تجريبي' },
+    cash: { en: 'Cash · recorded at counter', ar: 'نقدي · مُسجّل عند الكاشير' },
+  };
+  SEED = [
+    { id: 'TX-1041', key: null, m: 'card', t: { en: 'Mastercard •• 4417', ar: 'ماستركارد •• 4417' }, time: '14:41', amt: 385, auth: 385, cap: 385, st: 'succeeded', reason: null, seed: true },
+    { id: 'TX-1040', key: null, m: 'wallet', t: { en: 'Wallet · 010 •••• 8821', ar: 'محفظة · 010 •••• 8821' }, time: '14:32', amt: 120, auth: 120, cap: 0, st: 'pending', reason: null, seed: true },
+    { id: 'TX-1039', key: null, m: 'card', t: { en: 'Meeza •• 2093', ar: 'ميزة •• 2093' }, time: '13:57', amt: 640, auth: 640, cap: 0, st: 'authorized', reason: null, seed: true },
+    { id: 'TX-1038', key: null, m: 'card', t: { en: 'Visa •• 8810', ar: 'فيزا •• 8810' }, time: '13:22', amt: 2300, auth: 0, cap: 0, st: 'failed', reason: { en: 'Declined · insufficient funds', ar: 'مرفوضة · رصيد غير كافٍ' }, seed: true },
+  ];
+  BACK = { hub: 'home', amount: 'hub', detail: 'amount', confirm: 'detail', capture: 'result', txd: 'tx', refund: 'txd', settle: 'tx', recon: 'tx', quiz: 'lesson', exp: 'learn' };
+  state = { locale: 'en', mode: 'light', device: 'emulator', screen: 'home', method: 'card', amount: '', ref: '', card: 'mc', capture: 'auto', scenario: 'approve', cashOk: false, current: null, dupNotice: false, seq: 0, idem: {}, key: null, txs: this.SEED, sel: null, filter: 'all', rfAmt: 'full', rfReason: 'customer', lt: 'fin', ls: 'agg', qi: 0, qPick: null, qScore: 0, qDone: false, ex: 'rest', xs: { rest: 'plain', shot: 'off', pinOn: false, proxy: false }, ret: {}, arm: null };
+
+  LESSONS = [
+    { id: 'agg', icon: 'hub', title: { en: 'What an aggregator does', ar: 'ماذا يفعل المُجمِّع' }, sub: { en: 'Who handles the money, and who does not', ar: 'من يتعامل مع الأموال ومن لا يتعامل' },
+      body: [{ en: 'PayFlow takes a payment for one merchant and routes it to the method the customer chose.', ar: 'يستقبل PayFlow دفعة لتاجر واحد ويوجّهها إلى الوسيلة التي اختارها العميل.' }, { en: 'In this learning app every provider is simulated. No money moves and no real card data is handled.', ar: 'في هذا التطبيق التعليمي كل مزوّد محاكى. لا تتحرك أي أموال ولا تُعالج بيانات بطاقة حقيقية.' }],
+      diagram: [{ en: 'Customer pays', ar: 'العميل يدفع' }, { en: 'PayFlow routes', ar: 'PayFlow يوجّه' }, { en: 'Method (simulated)', ar: 'الوسيلة (محاكاة)' }, { en: 'Merchant sees the result', ar: 'التاجر يرى النتيجة' }] },
+    { id: 'auth', icon: 'lock', title: { en: 'Authorize, capture, settle', ar: 'التفويض والتحصيل والتسوية' }, sub: { en: 'The three steps of a card payment', ar: 'المراحل الثلاث لدفعة البطاقة' },
+      body: [{ en: 'An authorization reserves the amount on the card. Nothing has been taken yet.', ar: 'التفويض يحجز المبلغ على البطاقة. لم يُخصم شيء بعد.' }, { en: 'Capture takes the reserved money. Settlement then pays the merchant in a batch, usually T+1.', ar: 'التحصيل يسحب المبلغ المحجوز. ثم تدفع التسوية للتاجر في دفعة، عادةً خلال T+1.' }],
+      diagram: [{ en: 'Authorize (reserve)', ar: 'تفويض (حجز)' }, { en: 'Capture (take)', ar: 'تحصيل (سحب)' }, { en: 'Settle (T+1)', ar: 'تسوية (T+1)' }, { en: 'Merchant paid out', ar: 'صرف للتاجر' }] },
+    { id: 'idem', icon: 'fingerprint', title: { en: 'Idempotency keys', ar: 'مفاتيح منع التكرار' }, sub: { en: 'Why a retry must not charge twice', ar: 'لماذا لا يجب أن تُخصم الإعادة مرتين' },
+      body: [{ en: 'A key is created once per payment attempt. Every retry sends the same key.', ar: 'يُنشأ المفتاح مرة واحدة لكل محاولة دفع. كل إعادة ترسل المفتاح نفسه.' }, { en: 'If the gateway has seen the key, it returns the original result instead of charging again.', ar: 'إذا رأت البوابة المفتاح من قبل، تُعيد النتيجة الأصلية بدلًا من خصم جديد.' }],
+      diagram: [{ en: 'Attempt 1 · key A', ar: 'المحاولة 1 · المفتاح A' }, { en: 'Retry · same key A', ar: 'إعادة · المفتاح A نفسه' }, { en: 'Same result, one charge', ar: 'النتيجة نفسها، خصم واحد' }] },
+    { id: 'status', icon: 'rule', title: { en: 'What each status means', ar: 'معنى كل حالة' }, sub: { en: 'Read the status before you act', ar: 'اقرأ الحالة قبل أن تتصرف' },
+      body: [{ en: 'Each status tells you what money has moved and what to do next.', ar: 'كل حالة تخبرك بما تحرّك من أموال وما الخطوة التالية.' }],
+      diagram: [{ en: 'Succeeded: captured', ar: 'ناجحة: تم التحصيل' }, { en: 'Authorized: reserved, not captured', ar: 'مُعتمد: محجوز ولم يُحصَّل' }, { en: 'Pending: waiting on the customer or gateway', ar: 'قيد الانتظار: بانتظار العميل أو البوابة' }, { en: 'Failed or expired: no money moved', ar: 'فشلت أو انتهت: لم تُحرَّك أموال' }, { en: 'Refunded: money returned', ar: 'مُستردّ: أُعيدت الأموال' }, { en: 'Status unknown: reconcile, never re-charge', ar: 'الحالة غير معروفة: طابِق ولا تُعِد الخصم' }] },
+  ];
+  GLOSS = [
+    { term: { en: 'Authorization', ar: 'التفويض' }, def: { en: 'A hold on the customer’s card for an amount. Money is reserved, not taken.', ar: 'حجز مبلغ على بطاقة العميل. المال يُحجز ولا يُسحب.' } },
+    { term: { en: 'Capture', ar: 'التحصيل' }, def: { en: 'Taking the money that an authorization reserved.', ar: 'سحب المال الذي حجزه التفويض.' } },
+    { term: { en: 'Settlement', ar: 'التسوية' }, def: { en: 'The batch payout that moves captured money to the merchant, usually T+1.', ar: 'دفعة الصرف التي تنقل المبالغ المُحصَّلة إلى التاجر، عادةً خلال T+1.' } },
+    { term: { en: 'Idempotency key', ar: 'مفتاح منع التكرار' }, def: { en: 'An ID for one payment attempt, so a retry cannot create a second charge.', ar: 'معرّف لمحاولة دفع واحدة، حتى لا تُنشئ الإعادة خصمًا ثانيًا.' } },
+    { term: { en: 'Reconciliation', ar: 'المطابقة' }, def: { en: 'Checking your records against the gateway to resolve unknown statuses.', ar: 'مقارنة سجلاتك مع البوابة لحسم الحالات غير المعروفة.' } },
+    { term: { en: 'Acquirer', ar: 'المُستحوِذ' }, def: { en: 'The bank that receives the merchant’s card payments and pays them out.', ar: 'البنك الذي يستلم مدفوعات البطاقات للتاجر ويصرفها له.' } },
+  ];
+  QUIZ = [
+    { q: { en: 'A card payment shows Authorized. Has the merchant received the money?', ar: 'تُظهر دفعة البطاقة "مُعتمد". هل استلم التاجر المال؟' }, opts: [{ en: 'Yes, in full', ar: 'نعم، كاملًا' }, { en: 'No, not until it is captured', ar: 'لا، ليس قبل تحصيله' }, { en: 'Yes, instantly', ar: 'نعم، فورًا' }], ok: 1, why: { en: 'Authorized means reserved. Capture takes the money, and settlement pays the merchant later.', ar: 'مُعتمد يعني محجوز. التحصيل يسحب المال، والتسوية تدفع للتاجر لاحقًا.' } },
+    { q: { en: 'The gateway times out and the status is unknown. What should PayFlow do?', ar: 'انتهت مهلة البوابة والحالة غير معروفة. ماذا يفعل PayFlow؟' }, opts: [{ en: 'Charge the card again', ar: 'خصم البطاقة مرة أخرى' }, { en: 'Mark it failed and move on', ar: 'تسجيلها فاشلة والمتابعة' }, { en: 'Reconcile with the gateway before any new charge', ar: 'المطابقة مع البوابة قبل أي خصم جديد' }], ok: 2, why: { en: 'Unknown is not failed. Ask the gateway first, because a second charge can double the cost.', ar: 'غير المعروفة ليست فاشلة. اسأل البوابة أولًا، لأن الخصم الثاني قد يضاعف المبلغ.' } },
+    { q: { en: 'Why does every retry of one attempt send the same idempotency key?', ar: 'لماذا ترسل كل إعادة لمحاولة واحدة مفتاح منع التكرار نفسه؟' }, opts: [{ en: 'So the gateway cannot create a second charge', ar: 'حتى لا تُنشئ البوابة خصمًا ثانيًا' }, { en: 'So the network is faster', ar: 'ليصبح الاتصال أسرع' }, { en: 'To encrypt the card number', ar: 'لتشفير رقم البطاقة' }], ok: 0, why: { en: 'The gateway matches the key and returns the original result instead of charging twice.', ar: 'تُطابق البوابة المفتاح وتعيد النتيجة الأصلية بدلًا من الخصم مرتين.' } },
+    { q: { en: 'Where does cash appear in PayFlow’s settlement batch?', ar: 'أين يظهر النقد في دفعة التسوية في PayFlow؟' }, opts: [{ en: 'It settles T+1 with cards', ar: 'يُسوّى خلال T+1 مع البطاقات' }, { en: 'It never appears in a batch', ar: 'لا يظهر في أي دفعة أبدًا' }, { en: 'It settles instantly to the bank', ar: 'يُصرف فورًا إلى البنك' }], ok: 1, why: { en: 'Cash is handed over at the counter. PayFlow records it, but it never enters a settlement batch.', ar: 'يُسلَّم النقد عند الكاشير. يسجله PayFlow لكنه لا يدخل أي دفعة تسوية.' } },
+  ];
+  EXPS = [
+    { id: 'rest', icon: 'storage', cat: { en: 'Data at rest', ar: 'البيانات المخزّنة' }, title: { en: 'Saved transaction data', ar: 'بيانات المعاملات المحفوظة' }, tag: 'better', control: { en: 'Encrypt saved data', ar: 'تشفير البيانات المحفوظة' }, why: { en: 'Where the app keeps payment records on the phone, and whether someone with file access can read them.', ar: 'أين يحتفظ التطبيق بسجلات الدفع على الهاتف، وهل يستطيع من يملك صلاحية الملفات قراءتها.' } },
+    { id: 'shot', icon: 'screenshot', cat: { en: 'App surface', ar: 'سطح التطبيق' }, title: { en: 'Screen capture on sensitive screens', ar: 'التقاط الشاشة في الشاشات الحساسة' }, tag: 'emu', control: { en: 'Block screenshots', ar: 'منع لقطات الشاشة' }, why: { en: 'Screenshots and recordings can reveal amounts and references. Blocking them is a common control.', ar: 'قد تكشف لقطات الشاشة والتسجيلات المبالغ والمراجع. منعها ضابط شائع.' } },
+    { id: 'pinOn', icon: 'timer', cat: { en: 'Auth & session', ar: 'المصادقة والجلسة' }, title: { en: 'Lock after idle', ar: 'القفل بعد الخمول' }, tag: 'emu', control: { en: 'Lock after 2 minutes idle', ar: 'القفل بعد دقيقتين خمولًا' }, why: { en: 'A session that stays open on an unlocked phone is a risk. An idle timeout reduces it.', ar: 'الجلسة المفتوحة على هاتف غير مقفل خطر. مهلة الخمول تقلله.' } },
+    { id: 'proxy', icon: 'vpn_lock', cat: { en: 'Network', ar: 'الشبكة' }, title: { en: 'Certificate pinning', ar: 'تثبيت الشهادة' }, tag: 'emu', control: { en: 'Pin the server certificate', ar: 'تثبيت شهادة الخادم' }, why: { en: 'Pinning makes the app trust only the expected server certificate, so a debugging proxy cannot read traffic silently.', ar: 'يجعل التثبيت التطبيق يثق بشهادة الخادم المتوقعة فقط، فلا يقرأ وكيل التصحيح الحركة بصمت.' } },
+    { id: 'bio', icon: 'fingerprint', cat: { en: 'Device integrity', ar: 'سلامة الجهاز' }, title: { en: 'Biometric strength and key attestation', ar: 'قوة القياسات الحيوية وإثبات المفاتيح' }, tag: 'device', why: { en: 'Hardware-backed keys and Class 3 biometrics exist only on a real device. The emulator cannot show them.', ar: 'المفاتيح المدعومة بالعتاد والقياسات الحيوية من الفئة 3 لا توجد إلا على جهاز حقيقي. المحاكي لا يُظهرها.' } },
+  ];
+  TAGS = { emu: { en: 'Emulator OK', ar: 'يعمل على المحاكي' }, better: { en: 'Better on device', ar: 'أفضل على جهاز فعلي' }, device: { en: 'Device required', ar: 'يتطلب جهازًا فعليًا' } };
+  TAGCLS = { emu: 'pf-badge b-succeeded', better: 'pf-badge b-pending', device: 'pf-badge b-failed' };
+  OUT = {
+    rest: { plain: { en: 'Records sit in plain text. Anyone with file access on a rooted device can read the amounts and references.', ar: 'السجلات محفوظة كنص واضح. من يملك صلاحية الملفات على جهاز مُفعَّل له الجذر يستطيع قراءة المبالغ والمراجع.' }, encrypted: { en: 'Records are encrypted with a key held in the Android Keystore. On a physical device that key sits in hardware, which is stronger.', ar: 'السجلات مشفّرة بمفتاح محفوظ في Android Keystore. على الجهاز الفعلي يكون المفتاح في العتاد، وهذا أقوى.' } },
+    shot: { off: { en: 'Screenshots and screen recording show the amount and reference.', ar: 'تُظهر لقطات الشاشة والتسجيل المبلغ والمرجع.' }, on: { en: 'The OS blocks screenshots and recordings on sensitive screens (FLAG_SECURE). The emulator honors this too.', ar: 'يمنع نظام التشغيل لقطات الشاشة والتسجيل في الشاشات الحساسة (FLAG_SECURE). المحاكي يطبّق ذلك أيضًا.' } },
+    pinOn: { off: { en: 'Anyone holding an unlocked phone can open PayFlow and see recent payments.', ar: 'من يمسك هاتفًا مفتوحًا يستطيع فتح PayFlow ورؤية الدفعات الأخيرة.' }, on: { en: 'PayFlow locks after 2 minutes idle and asks for biometrics or the device PIN. The app never stores that PIN.', ar: 'يقفل PayFlow بعد دقيقتين خمولًا ويطلب القياس الحيوي أو رمز الجهاز. التطبيق لا يخزّن ذلك الرمز أبدًا.' } },
+    proxy: { off: { en: 'A debugging proxy with its own certificate can read request content (simulated).', ar: 'يستطيع وكيل تصحيح بشهادته الخاصة قراءة محتوى الطلبات (محاكاة).' }, on: { en: 'Pinning rejects the proxy certificate. The request fails closed and nothing is sent (simulated).', ar: 'يرفض التثبيت شهادة الوكيل. يفشل الطلب بشكل آمن ولا يُرسل شيء (محاكاة).' } },
+    bio: { x: { en: 'Read this on a physical device. The emulator reports software-backed keys and no Class 3 biometrics.', ar: 'اقرأ هذا على جهاز فعلي. المحاكي يُظهر مفاتيح مدعومة بالبرمجيات ولا قياسات حيوية من الفئة 3.' } },
+  };
+
+  openScreen = (target, origin, extra = {}) => this.setState((s) => ({ ...extra, screen: target, ret: { ...s.ret, [target]: origin } }));
+  setXs = (k, v) => this.setState((s) => ({ xs: { ...s.xs, [k]: v } }));
+  pickAnswer = (i) => this.setState((s) => (s.qPick !== null ? {} : { qPick: i, qScore: s.qScore + (i === this.QUIZ[s.qi].ok ? 1 : 0) }));
+  nextQuestion = () => this.setState((s) => (s.qi + 1 < this.QUIZ.length ? { qi: s.qi + 1, qPick: null } : { qDone: true }));
+  restartQuiz = () => this.setState({ qi: 0, qPick: null, qScore: 0, qDone: false });
+  explainTx = () => this.setState((s) => {
+    const x = s.txs.find((r) => r.id === s.sel);
+    const ds = x ? this.dStatus(x) : 'pending';
+    return { screen: 'lesson', ls: ['authorized', 'succeeded'].includes(ds) ? 'auth' : 'status', lt: 'fin', ret: { ...s.ret, lesson: 'txd' } };
+  });
+
+  flowPick = (k) => () => this.setState((s) => {
+    const firstTx = s.txs[0];
+    const rf = s.txs.find((x) => this.refundable(x) > 0);
+    const auth = s.txs.find((x) => x.st === 'authorized');
+    const amt = s.amount || '100';
+    if (k === 'home') return { screen: 'home' };
+    if (k === 'hub') return { screen: 'hub', method: 'card', amount: '', ref: '' };
+    if (k === 'amount') return { screen: 'amount', method: 'card', amount: '', ref: '', cashOk: false };
+    if (k === 'detail') return { screen: 'detail', method: 'card', amount: amt };
+    if (k === 'confirm') return { screen: 'confirm', method: 'card', amount: amt, key: 'idem-' + (1042 + s.seq) };
+    if (k === 'result') return s.current ? { screen: 'result' } : {};
+    if (k === 'capture') return auth ? { screen: 'capture', current: auth.id } : {};
+    if (k === 'tx') return { screen: 'tx' };
+    if (k === 'txd') return firstTx ? { screen: 'txd', sel: firstTx.id, current: firstTx.id } : {};
+    if (k === 'refund') return rf ? { screen: 'refund', sel: rf.id, current: rf.id } : {};
+    if (k === 'settle') return { screen: 'settle' };
+    if (k === 'recon') return { screen: 'recon' };
+    if (k === 'learn') return { screen: 'learn' };
+    return {};
+  });
+
+  setLocale = (l) => this.setState({ locale: l });
+  setMode = (m) => this.setState({ mode: m });
+  setDevice = (d) => this.setState({ device: d });
+  goHome = () => this.setState({ screen: 'home' });
+  goPay = () => this.setState({ screen: 'hub', method: 'card', amount: '', ref: '', cashOk: false, dupNotice: false });
+  goTx = () => this.setState({ screen: 'tx' });
+  goLearn = () => this.setState({ screen: 'learn' });
+  goBack = () => this.setState((s) => ({ screen: s.ret[s.screen] || this.BACK[s.screen] || 'home' }));
+  goDetail = () => this.setState({ screen: 'detail' });
+  goConfirm = () => this.setState((s) => ({ screen: 'confirm', key: 'idem-' + (1042 + s.seq) }));
+  pickMethod = (m) => this.setState({ method: m, screen: 'amount', amount: '', ref: '', cashOk: false, capture: 'auto', scenario: 'approve' });
+  onRef = (e) => this.setState({ ref: e.target.value.slice(0, 40) });
+  toggleCash = () => this.setState((s) => ({ cashOk: !s.cashOk }));
+  press = (k) => this.setState((s) => {
+    let a = s.amount;
+    if (k === 'back') a = a.slice(0, -1);
+    else if (k === '.') { if (a.includes('.')) return { amount: a }; a = a === '' ? '0.' : a + '.'; }
+    else {
+      if (a.includes('.') && a.split('.')[1].length >= 2) return { amount: a };
+      if (a.replace('.', '').length >= 7) return { amount: a };
+      a = a === '0' ? k : a + k;
+    }
+    return { amount: a };
+  });
+  reset = () => this.setState((s) => ({ screen: 'home', method: 'card', amount: '', ref: '', card: 'mc', capture: 'auto', scenario: 'approve', cashOk: false, current: null, dupNotice: false, seq: 0, idem: {}, key: null, txs: this.SEED }));
+  pay = () => { if (this.state.screen === 'processing') return; this.setState({ screen: 'processing' }); setTimeout(this.resolve, 900); };
+  resolve = () => this.setState((s) => {
+    const n = 1042 + s.seq;
+    const id = 'TX-' + n;
+    const key = s.key || 'idem-' + n;
+    const amt = parseFloat(s.amount);
+    const isCard = s.method === 'card';
+    if (s.idem[key]) return { current: s.idem[key], screen: 'result', dupNotice: true };
+    const base = { id, key, attempt: 'ATT-' + n, m: s.method, t: isCard ? this.CARD[s.card] : this.SANDBOX[s.method], time: '15:' + String(s.seq + 5).padStart(2, '0'), amt, auth: amt, cap: 0, st: 'pending', reason: null, seed: false };
+    let tx;
+    if (isCard) {
+      if (s.scenario === 'decline') tx = { ...base, auth: 0, st: 'failed', reason: this.RS.funds };
+      else if (s.scenario === 'timeout') tx = { ...base, st: 'pending', reason: this.RS.timeout };
+      else if (s.capture === 'auto') tx = { ...base, st: 'succeeded', cap: amt };
+      else tx = { ...base, st: 'authorized' };
+    } else if (s.method === 'cash') tx = { ...base, st: 'succeeded', cap: amt };
+    else tx = base;
+    const screen = s.method === 'wallet' || s.method === 'instapay' ? 'wait' : 'result';
+    return { txs: [tx, ...s.txs], idem: { ...s.idem, [key]: id }, seq: s.seq + 1, current: id, screen, dupNotice: false };
+  });
+  retry = () => {
+    const s = this.state;
+    const cur = s.txs.find((t) => t.id === s.current);
+    if (!cur) return;
+    this.setState({ key: cur.key, screen: 'processing' });
+    setTimeout(this.replay, 600);
+  };
+  replay = () => this.setState((s) => ({ current: s.idem[s.key] || s.current, screen: 'result', dupNotice: true }));
+  inquire = () => this.setState((s) => {
+    const tx = s.txs.find((x) => x.id === s.current);
+    if (!tx || tx.st !== 'pending' || !tx.reason) return {};
+    const n = s.inqSeq || 0;
+    const step = ['pending', 'succeeded', 'failed'][n % 3];
+    const base = { ...tx, inqN: n + 1, inqLast: step };
+    const upd = step === 'pending' ? base
+      : step === 'succeeded' ? { ...base, st: 'succeeded', cap: tx.amt, reason: null }
+      : { ...base, st: 'failed', cap: 0, reason: { en: 'Gateway confirmed: not captured. No money moved.', ar: 'أكّدت البوابة: لم يُحصَّل. لم تُحرَّك أي أموال.' } };
+    return { txs: s.txs.map((x) => (x.id === tx.id ? upd : x)), inqSeq: n + 1 };
+  });
+  settle = (kind) => this.setState((s) => ({
+    txs: s.txs.map((t) => (t.id !== s.current ? t : kind === 'approve' ? { ...t, st: 'succeeded', cap: t.amt } : kind === 'expire' ? { ...t, st: 'expired', reason: this.RS.expired } : { ...t, st: 'failed', reason: this.RS.cancelled })),
+    screen: 'result',
+  }));
+  captureTo = (frac) => this.setState((s) => ({
+    txs: s.txs.map((t) => (t.id !== s.current ? t : { ...t, st: 'succeeded', cap: Math.round(t.auth * frac * 100) / 100 })),
+    screen: 'result',
+  }));
+  done = () => this.setState({ screen: 'home', method: 'card', amount: '', ref: '', cashOk: false, dupNotice: false });
+  viewTx = () => this.setState({ screen: 'tx', dupNotice: false });
+  goCapture = () => this.setState({ screen: 'capture' });
+
+  refsOf = (x) => x.refunds || [];
+  refunded = (txs, noCash) => txs.filter((x) => !noCash || x.m !== 'cash').reduce((a, x) => a + this.refsOf(x).filter((r) => r.st === 'refunded').reduce((b, r) => b + r.amt, 0), 0);
+  refundable = (x) => {
+    if (x.st !== 'succeeded') return 0;
+    const used = this.refsOf(x).filter((r) => r.st !== 'failed').reduce((a, r) => a + r.amt, 0);
+    return Math.round((x.cap - used) * 100) / 100;
+  };
+  dStatus = (x) => {
+    const done = this.refsOf(x).filter((r) => r.st === 'refunded').reduce((a, r) => a + r.amt, 0);
+    if (x.st === 'succeeded' && done > 0) return done >= x.cap ? 'refunded' : 'partial';
+    if (x.st === 'failed' && x.reason === this.RS.cancelled) return 'cancelled';
+    return x.st;
+  };
+  failKey = (x) => {
+    if (!x) return null;
+    if (x.st === 'pending') return x.reason ? 'timeout' : null;
+    if (this.dStatus(x) === 'cancelled') return 'cancelled';
+    if (x.st === 'expired') return 'expired';
+    if (x.st === 'voided') return 'released';
+    if (x.st === 'failed') return x.reason && x.reason.en && x.reason.en.indexOf('Gateway confirmed') === 0 ? 'gateway' : 'funds';
+    return null;
+  };
+  openTx = (id) => this.setState({ screen: 'txd', sel: id, current: id, dupNotice: false, arm: null });
+  setFilter = (f) => this.setState({ filter: f });
+  goSettle = () => this.setState({ screen: 'settle' });
+  goRecon = () => this.setState({ screen: 'recon' });
+  goRefund = () => this.setState({ screen: 'refund', rfAmt: 'full', rfReason: 'customer', arm: null });
+  submitRefund = () => this.setState((s) => {
+    const tx = s.txs.find((x) => x.id === s.sel);
+    const rem = tx ? this.refundable(tx) : 0;
+    const amt = s.rfAmt === 'full' ? rem : s.rfAmt === 'half' ? Math.round(rem * 50) / 100 : null;
+    if (!tx || amt === null || amt <= 0 || amt > rem) return {};
+    if (s.arm !== 'refund') return { arm: 'refund' };
+    const n = 2000 + s.txs.reduce((a, x) => a + this.refsOf(x).length, 0) + 1;
+    const rf = { id: 'RF-' + n, amt, st: 'pending', reason: s.rfReason, time: '15:' + String(s.seq + 5).padStart(2, '0') };
+    return { txs: s.txs.map((x) => (x.id === tx.id ? { ...x, refunds: [...this.refsOf(x), rf] } : x)), screen: 'txd', arm: null };
+  });
+  settleRefund = (txId, rid, ok) => this.setState((s) => ({
+    txs: s.txs.map((x) => (x.id !== txId ? x : { ...x, refunds: this.refsOf(x).map((r) => (r.id === rid ? { ...r, st: ok ? 'refunded' : 'failed' } : r)) })),
+  }));
+  voidAuth = () => this.setState((s) => (s.arm !== 'void' ? { arm: 'void' } : { arm: null, txs: s.txs.map((x) => (x.id !== s.sel ? x : { ...x, st: 'voided', cap: 0 })) }));
+  resolveTx = (id, ok) => this.setState((s) => ({
+    txs: s.txs.map((x) => (x.id !== id ? x : ok ? { ...x, st: 'succeeded', cap: x.amt, reason: null } : { ...x, st: 'failed', reason: { en: 'Gateway confirmed: not captured. No money moved.', ar: 'أكّدت البوابة: لم يُحصَّل. لم تُحرَّك أي أموال.' } })),
+  }));
+
+  renderVals() {
+    const s = this.state;
+    const ar = s.locale === 'ar';
+    const L = (en, a) => (ar ? a : en);
+    const T = (o) => (ar ? o.ar : o.en);
+    const fmt = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const money = (n) => (ar ? fmt(n) + ' ج.م' : 'EGP ' + fmt(n));
+    const chip = (on) => 'border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer; font: 500 14px/20px var(--font-sans); ' + (on ? 'background: var(--primary); color: var(--on-primary);' : 'background: var(--surface); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--border);');
+    const opt = (on) => 'display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; text-align: start; border: 0; border-radius: 12px; padding: 12px 14px; cursor: pointer; font: 500 16px/24px var(--font-sans); color: var(--text-primary); background: var(--surface); ' + (on ? 'box-shadow: inset 0 0 0 2px var(--primary);' : 'box-shadow: inset 0 0 0 1px var(--border);');
+    const dir = ar ? 'rtl' : 'ltr';
+    const flip = ar ? 'flip' : '';
+    const backIcon = ar ? 'arrow_forward' : 'arrow_back';
+
+    const t = {
+      title: L('Payments prototype', 'نموذج المدفوعات التفاعلي'),
+      intro: L('Phases 1 to 3 · payments, transactions and refunds, FinTech Learning and security experiments. One shared state. Simulation only.', 'المراحل 1 إلى 3 · المدفوعات والمعاملات والاستردادات، والتعلّم المالي وتجارب الأمان. حالة مشتركة واحدة. محاكاة فقط.'),
+      lang: L('Language', 'اللغة'),
+      theme: L('Theme', 'المظهر'),
+      device: L('Device context', 'سياق الجهاز'),
+      deviceNote: L('Educational label only. It does not change how payments behave.', 'تسمية تعليمية فقط. لا تغيّر طريقة عمل المدفوعات.'),
+      reset: L('Reset sandbox', 'إعادة ضبط البيئة التجريبية'),
+      insTitle: L('Shared state', 'الحالة المشتركة'),
+      insScreen: L('Screen', 'الشاشة'),
+      insTx: L('Transactions', 'المعاملات'),
+      insNew: L('New this session', 'جديدة في هذه الجلسة'),
+      insSales: L('Sales today', 'مبيعات اليوم'),
+      insKeys: L('Idempotency keys', 'مفاتيح منع التكرار'),
+      insLast: L('Last key', 'آخر مفتاح'),
+      insNote: L('Payments write to one list. Transactions and Home read from it, so nothing is duplicated.', 'المدفوعات تكتب في قائمة واحدة. المعاملات والرئيسية تقرآن منها دون تكرار.'),
+      sim: L('Simulation · No real money or providers', 'محاكاة · لا أموال ولا مزودين حقيقيين'),
+      profile: L('Profile and settings', 'الحساب والإعدادات'),
+      greeting: L('Good afternoon, Ahmed', 'مساء الخير يا أحمد'),
+      merchant: L('Sandbox merchant · Nour Bakery', 'تاجر تجريبي · مخبز نور'),
+      back: L('Back', 'رجوع'),
+      navAria: L('Main navigation', 'التنقل الرئيسي'),
+      mapTitle: L('Screen list · Phases 1 to 3', 'قائمة الشاشات · المراحل 1 إلى 3'),
+      mapIntro: L('Each screen reads the same state. Use the controls to change language, theme and device context.', 'كل شاشة تقرأ الحالة نفسها. استخدم عناصر التحكم لتغيير اللغة والمظهر وسياق الجهاز.'),
+      notYet: L('Not in this board', 'ليس ضمن هذه اللوحة'),
+      notYetBody: L('Payment link and QR display are still undesigned, so they are not in this board.', 'رابط الدفع وعرض QR ما زالا غير مُصمَّمين، لذلك ليسا في هذه اللوحة.'),
+      quick: L('Quick actions', 'إجراءات سريعة'),
+      activity: L('Sandbox activity · today', 'النشاط التجريبي · اليوم'),
+      hubIntro: L('Choose how the customer pays. Every option runs in the simulator.', 'اختر طريقة دفع العميل. كل خيار يعمل داخل المحاكي.'),
+      hubGuard: L('PayFlow never asks for a real card number, CVV, PIN or banking password.', 'PayFlow لا يطلب أبدًا رقم بطاقة حقيقي أو CVV أو PIN أو كلمة مرور بنكية.'),
+      refLabel: L('Reference (optional)', 'مرجع (اختياري)'),
+      refPh: L('e.g. Table 4 · order 218', 'مثال: طاولة 4 · طلب 218'),
+      amtLabel: L('Amount', 'المبلغ'),
+      cont: L('Continue', 'متابعة'),
+      edit: L('Edit', 'تعديل'),
+      testCards: L('Test cards', 'بطاقات تجريبية'),
+      capMode: L('Capture', 'التحصيل'),
+      simOutcome: L('Simulator outcome', 'نتيجة المحاكي'),
+      cardGuard: L('Test cards only. The form has no field for a real card number, CVV or PIN.', 'بطاقات تجريبية فقط. النموذج لا يحتوي حقلًا لرقم بطاقة حقيقي أو CVV أو PIN.'),
+      pushInfo: L('The customer approves on their own phone. You simulate that decision on the next screen. Test customer number: 010 0000 0000 (fixed).', 'يوافق العميل من هاتفه. تحاكي هذا القرار في الشاشة التالية. رقم العميل التجريبي: 010 0000 0000 (ثابت).'),
+      cashCheck: L('I received this cash amount at the counter.', 'استلمت هذا المبلغ نقدًا عند الكاشير.'),
+      cashNote: L('Recorded only. PayFlow never settles cash.', 'مُسجّل فقط. لا يُسوّي PayFlow النقد أبدًا.'),
+      cMethod: L('Method', 'الوسيلة'),
+      cCustomer: L('Customer', 'العميل'),
+      cRef: L('Reference', 'المرجع'),
+      cMode: L('Outcome', 'النتيجة'),
+      total: L('Total', 'الإجمالي'),
+      keyNote: L('Same key, same result. A retry never creates a second payment.', 'نفس المفتاح = نفس النتيجة. إعادة المحاولة لا تُنشئ دفعة ثانية أبدًا.'),
+      processing: L('Sending to the simulated gateway…', 'جارٍ الإرسال إلى بوابة المحاكاة…'),
+      waitTitle: L('Waiting for the customer', 'بانتظار العميل'),
+      waitBody: L('The customer has to approve this payment in their app.', 'يجب على العميل الموافقة على هذه الدفعة في تطبيقه.'),
+      waitTimer: L('Expires in 2:00 · simulated, the clock does not run', 'تنتهي خلال 2:00 · محاكاة، المؤقت لا يعمل'),
+      simApprove: L('Simulate: customer approves', 'محاكاة: العميل يوافق'),
+      simExpire: L('Simulate: no response (expires)', 'محاكاة: لا استجابة (تنتهي المهلة)'),
+      cancelReq: L('Cancel request', 'إلغاء الطلب'),
+      dupBanner: L('Original operation returned. No new payment was created.', 'أُعيدت العملية الأصلية. لم تُنشأ أي دفعة جديدة.'),
+      retryBtn: L('Retry payment with same key', 'أعد الدفع بالمفتاح نفسه'),
+      viewTx: L('View in Transactions', 'عرض في المعاملات'),
+      done: L('Done', 'تم'),
+      capture: L('Capture this authorization', 'حصّل هذا الاعتماد'),
+      capHead: L('Authorized, not captured', 'مُعتمد غير مُحصَّل'),
+      capNote: L('Capture can never exceed the authorized amount. A partial capture releases the rest.', 'لا يمكن أن يتجاوز التحصيل المبلغ المُعتمد. التحصيل الجزئي يُفرج عن الباقي.'),
+      txIntro: L('Newest first. Payments from this session appear here as soon as they finish.', 'الأحدث أولًا. المدفوعات من هذه الجلسة تظهر هنا فور انتهائها.'),
+      txFoot: L('Tap a payment for its timeline, refunds and release. Settlement and reconciliation sit above the list.', 'اضغط على أي دفعة للاطلاع على خطها الزمني والاستردادات والإفراج. التسوية والمطابقة فوق القائمة.'),
+      learnTitle: L('Learn', 'تعلّم'),
+      learnBody: L('FinTech Learning and the Security Lab arrive in Phase 3. The Security Lab main screen is already designed on the PayFlow Screens canvas.', 'يصل التعلّم المالي ومختبر الأمان في المرحلة 3. الشاشة الرئيسية لمختبر الأمان مُصمَّمة بالفعل على اللوحة.'),
+    };
+
+    const ctxLabel = s.device === 'physical' ? L('Physical device · Pixel 8', 'جهاز فعلي · Pixel 8') : L('Android Emulator · API 35', 'محاكي Android · API 35');
+    const is = (k) => s.screen === k;
+    const isHome = is('home'), isHub = is('hub'), isAmt = is('amount'), isDet = is('detail'), isConf = is('confirm');
+    const isProc = is('processing'), isWait = is('wait'), isRes = is('result'), isCap = is('capture'), isTx = is('tx'), isLearn = is('learn');
+    const hasBack = isHub || isAmt || isDet || isConf || isCap || is('txd') || is('refund') || is('settle') || is('recon') || is('lesson') || is('quiz') || is('gloss') || is('exp');
+    const homeBar = isHome;
+    const titleBar = !isHome && !hasBack;
+    const showNav = !(isProc || isWait || isRes || isCap);
+    const screenNames = {
+      home: L('Home', 'الرئيسية'), hub: L('New payment', 'دفعة جديدة'), amount: L('Amount', 'المبلغ'),
+      detail: L('Method', 'الوسيلة'), confirm: L('Confirm', 'تأكيد'), processing: L('Processing', 'المعالجة'),
+      wait: L('Waiting for customer', 'بانتظار العميل'), result: L('Result', 'النتيجة'), capture: L('Capture', 'التحصيل'),
+      tx: L('Transactions', 'المعاملات'), learn: L('Learn', 'تعلّم'),
+      txd: L('Transaction', 'المعاملة'), refund: L('Refund', 'استرداد'), settle: L('Settlement', 'التسوية'), recon: L('Reconciliation', 'المطابقة'),
+    };
+    const screenTitle = screenNames[s.screen];
+    const isLearnTab = ['learn', 'lesson', 'quiz', 'gloss', 'exp'].includes(s.screen);
+    const navItems = [
+      { icon: 'home', label: L('Home', 'الرئيسية'), cls: isHome ? 'on' : '', current: isHome ? 'page' : 'false', pick: this.goHome },
+      { icon: 'payments', label: L('Payments', 'المدفوعات'), cls: isHub || isAmt || isDet || isConf ? 'on' : '', current: isHub || isAmt || isDet || isConf ? 'page' : 'false', pick: this.goPay },
+      { icon: 'receipt_long', label: L('Transactions', 'المعاملات'), cls: isTx || is('txd') || is('refund') || is('settle') || is('recon') ? 'on' : '', current: isTx || is('txd') || is('refund') || is('settle') || is('recon') ? 'page' : 'false', pick: this.goTx },
+      { icon: 'school', label: L('Learn', 'تعلّم'), cls: isLearnTab ? 'on' : '', current: isLearnTab ? 'page' : 'false', pick: this.goLearn },
+    ];
+
+    const locales = [{ id: 'en', label: 'English' }, { id: 'ar', label: 'العربية' }].map((o) => ({ label: o.label, style: chip(s.locale === o.id), pressed: s.locale === o.id, pick: () => this.setLocale(o.id) }));
+    const modes = [{ id: 'light', label: L('Light', 'فاتح') }, { id: 'dark', label: L('Dark', 'داكن') }].map((o) => ({ label: o.label, style: chip(s.mode === o.id), pressed: s.mode === o.id, pick: () => this.setMode(o.id) }));
+    const devices = [{ id: 'emulator', label: L('Emulator', 'المحاكي') }, { id: 'physical', label: L('Physical device', 'جهاز فعلي') }].map((o) => ({ label: o.label, style: chip(s.device === o.id), pressed: s.device === o.id, pick: () => this.setDevice(o.id) }));
+
+    const STAT = {
+      succeeded: { label: L('Succeeded', 'ناجحة'), icon: 'check_circle', kind: 'succeeded' },
+      authorized: { label: L('Authorized', 'مُعتمد'), icon: 'lock', kind: 'authorized' },
+      pending: { label: L('Pending', 'قيد الانتظار'), icon: 'schedule', kind: 'pending' },
+      failed: { label: L('Failed', 'فشلت'), icon: 'cancel', kind: 'failed' },
+      expired: { label: L('Expired', 'انتهت المهلة'), icon: 'timer_off', kind: 'failed' },
+    };
+    const MICON = { card: 'credit_card', wallet: 'account_balance_wallet', instapay: 'phonelink_ring', cash: 'payments' };
+    const MNAME = { card: L('Bank card', 'بطاقة بنكية'), wallet: L('Mobile wallet', 'محفظة'), instapay: L('InstaPay', 'إنستاباي'), cash: L('Cash', 'نقدي') };
+    const DS = {
+      succeeded: STAT.succeeded, authorized: STAT.authorized, pending: STAT.pending, failed: STAT.failed, expired: STAT.expired,
+      cancelled: { label: L('Cancelled', 'أُلغيت'), icon: 'block', kind: 'failed' },
+      voided: { label: L('Released', 'مُفرَج عنه'), icon: 'undo', kind: 'failed' },
+      refunded: { label: L('Refunded', 'مُستردّ'), icon: 'undo', kind: 'refund' },
+      partial: { label: L('Partly refunded', 'مُسترد جزئيًا'), icon: 'undo', kind: 'refund' },
+    };
+    const txRow = (x) => {
+      const st = DS[this.dStatus(x)];
+      return { id: x.id, icon: MICON[x.m], title: T(x.t), sub: MNAME[x.m] + ' · ' + L('test', 'تجريبي') + ' · ' + x.time + ' · ' + x.id, amt: money(x.amt), kind: st.kind, bicon: st.icon, label: st.label, open: () => this.openTx(x.id) };
+    };
+    const allRows = s.txs.map(txRow);
+    const newTx = s.txs.filter((x) => !x.seed);
+    const cnt = (st) => newTx.filter((x) => x.st === st).length;
+    const sumCap = newTx.reduce((a, x) => a + x.cap, 0);
+    const sumNonCash = newTx.filter((x) => x.m !== 'cash').reduce((a, x) => a + x.cap, 0);
+    const sales = money(18640.5 + sumCap - this.refunded(s.txs));
+    const stats = [
+      { value: String(63 + newTx.length), label: L('Payments', 'مدفوعات'), color: 'var(--text-primary)' },
+      { value: String(4 + cnt('pending')), label: L('Pending', 'قيد الانتظار'), color: 'var(--warning)' },
+      { value: String(5 + cnt('failed') + cnt('expired')), label: L('Failed', 'فشلت'), color: 'var(--error)' },
+    ];
+    const sessionNote = L(newTx.length + ' new this session · shared with Transactions', newTx.length + ' جديدة في هذه الجلسة · مشتركة مع المعاملات');
+    const settling = money(12430 + sumNonCash - this.refunded(s.txs, true));
+    const available = money(48250.75);
+    const held = s.txs.find((x) => x.st === 'authorized');
+    const callout = held
+      ? { lead: L('Authorized ≠ paid.', 'الاعتماد ليس دفعًا.'), body: L(T(held.t) + ' is holding ' + money(held.auth) + '. Nothing moves until you capture.', T(held.t) + ' تحجز ' + money(held.auth) + '. لن يُخصم شيء حتى تُحصّل.') }
+      : { lead: L('Authorized ≠ paid.', 'الاعتماد ليس دفعًا.'), body: L('Authorize-only payments wait for your capture. Run one to see it here.', 'المدفوعات المُعتمدة فقط تنتظر تحصيلك. نفّذ واحدة لتراها هنا.') };
+    const actions = [
+      { icon: 'add_card', label: L('New payment', 'دفعة جديدة'), disabled: false, pick: this.goPay },
+      { icon: 'link', label: L('Payment link', 'رابط دفع'), disabled: true, pick: () => {} },
+      { icon: 'qr_code_2', label: L('Show QR', 'عرض QR'), disabled: true, pick: () => {} },
+      { icon: 'restart_alt', label: L('Reset', 'إعادة'), disabled: false, pick: this.reset },
+    ];
+    const methods = [
+      { id: 'card', name: MNAME.card, sub: L('Visa, Mastercard, Meeza · test cards', 'فيزا وماستركارد وميزة · بطاقات تجريبية'), icon: MICON.card },
+      { id: 'wallet', name: MNAME.wallet, sub: L('Customer approves on their phone', 'يوافق العميل من هاتفه'), icon: MICON.wallet },
+      { id: 'instapay', name: MNAME.instapay, sub: L('Instant push to the customer’s app', 'دفع فوري إلى تطبيق العميل'), icon: MICON.instapay },
+      { id: 'cash', name: MNAME.cash, sub: L('Record only · never settled', 'تسجيل فقط · لا يُسوّى أبدًا'), icon: MICON.cash },
+    ].map((m) => ({ ...m, style: opt(false), pick: () => this.pickMethod(m.id) }));
+
+    const mName = MNAME[s.method];
+    const amtNum = parseFloat(s.amount) || 0;
+    const amtOk = s.amount !== '' && amtNum >= 1 && amtNum <= 50000;
+    const amtErr = s.amount === '' || amtOk ? '' : amtNum < 1 ? L('Minimum is EGP 1.00', 'الحد الأدنى ١.٠٠ ج.م') : L('Sandbox limit is EGP 50,000.00', 'حد المحاكاة ٥٠٬٠٠٠.٠٠ ج.م');
+    const amtShown = ar ? (s.amount || '0') + ' ج.م' : 'EGP ' + (s.amount || '0');
+    const keyStyle = 'height: 56px; border: 0; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); font: 600 22px/28px var(--font-sans); color: var(--text-primary); cursor: pointer;';
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back'].map((k) => ({ v: k === 'back' ? L('Del', 'حذف') : k, aria: k === 'back' ? L('Delete digit', 'حذف الرقم') : k === '.' ? L('Decimal point', 'فاصلة عشرية') : k, style: keyStyle, pick: () => this.press(k) }));
+    const cardOpts = ['visa', 'mc', 'meeza'].map((id) => ({ label: T(this.CARD[id]), pressed: s.card === id, style: opt(s.card === id), pick: () => this.setState({ card: id }) }));
+    const capOpts = [{ id: 'auto', label: L('Authorize and capture now', 'اعتماد وتحصيل فورًا') }, { id: 'manual', label: L('Authorize only · capture later', 'اعتماد فقط · تحصيل لاحقًا') }].map((o) => ({ label: o.label, pressed: s.capture === o.id, style: opt(s.capture === o.id), pick: () => this.setState({ capture: o.id }) }));
+    const scenOpts = [{ id: 'approve', label: L('Approve', 'موافقة') }, { id: 'decline', label: L('Decline · insufficient funds', 'رفض · رصيد غير كافٍ') }, { id: 'timeout', label: L('Gateway timeout · status unknown', 'مهلة البوابة · حالة غير معروفة') }].map((o) => ({ label: o.label, pressed: s.scenario === o.id, style: opt(s.scenario === o.id), pick: () => this.setState({ scenario: o.id }) }));
+    const dCard = s.method === 'card', dPush = s.method === 'wallet' || s.method === 'instapay', dCash = s.method === 'cash';
+    const detailNotOk = dCash && !s.cashOk;
+    const scenLabel = dCard ? (s.scenario === 'approve' ? scenOpts[0].label + ' · ' + (s.capture === 'auto' ? L('capture now', 'تحصيل فوري') : L('authorize only', 'اعتماد فقط')) : scenOpts[s.scenario === 'decline' ? 1 : 2].label) : dCash ? L('Recorded immediately', 'تُسجَّل فورًا') : L('Customer decides on their phone', 'يقرر العميل من هاتفه');
+    const cCustomer = dCard ? T(this.CARD[s.card]) : dPush ? L('Test customer · 010 0000 0000', 'عميل تجريبي · 010 0000 0000') : L('Counter sale', 'بيع من الكاشير');
+    const refShown = s.ref || '—';
+    const payLabel = (ar ? 'ادفع ' : 'Pay ') + amtShown;
+    const keyShown = s.key || '—';
+
+    const cur = s.txs.find((x) => x.id === s.current) || null;
+    const rs = cur ? DS[this.dStatus(cur)] : { icon: 'check_circle', label: '', kind: 'succeeded' };
+    const RC = { succeeded: ['var(--success-container, #DCFCE7)', 'var(--success, #15803D)'], authorized: ['var(--primary-container)', 'var(--on-primary-container)'], pending: ['var(--warning-container, #FEF3C7)', 'var(--warning)'], failed: ['var(--error-container, #FDE2E1)', 'var(--error)'] };
+    const rc = RC[rs.kind] || RC.failed;
+    let resMsg = '';
+    const steps = [];
+    if (cur) {
+      if (cur.st === 'succeeded') resMsg = cur.m === 'cash' ? L('Recorded as cash. PayFlow never settles cash.', 'سُجّل نقدًا. لا يُسوّي PayFlow النقد أبدًا.') : cur.cap < cur.auth ? L('Partially captured ' + money(cur.cap) + '. The rest of the authorization was released.', 'تم تحصيل ' + money(cur.cap) + ' جزئيًا. أُفرج عن باقي الاعتماد.') : L('Captured ' + money(cur.cap) + '. Settles T+1 to available balance.', 'تم تحصيل ' + money(cur.cap) + '. تُسوّى خلال T+1 إلى الرصيد المتاح.');
+      else if (cur.st === 'authorized') resMsg = L('Authorized, not captured. No money has moved yet.', 'مُعتمد وغير مُحصَّل. لم تُحرَّك أي أموال بعد.');
+      else if (cur.st === 'pending') resMsg = cur.reason ? T(this.RS.timeout) : L('Waiting for the customer to approve. Nothing is paid until they do.', 'بانتظار موافقة العميل. لا يُدفع شيء حتى يوافق.');
+      else if (cur.st === 'voided') resMsg = L('Authorization released by the merchant. Nothing was captured.', 'أفرج التاجر عن الاعتماد. لم يُحصَّل شيء.');
+      else if (cur.st === 'expired') resMsg = T(this.RS.expired);
+      else resMsg = cur.reason ? T(cur.reason) : L('Declined. No money moved.', 'مرفوضة. لم تُحرَّك أي أموال.');
+      steps.push({ c: 'ok', text: L('Created · idempotency key stored', 'أُنشئت · حُفظ مفتاح منع التكرار') });
+      steps.push({ c: 'ok', text: L('Sent to simulated gateway', 'أُرسلت إلى بوابة المحاكاة') });
+      if (cur.m === 'cash') steps.push({ c: 'ok', text: L('Recorded at the counter', 'سُجّل عند الكاشير') });
+      else if (cur.m === 'card') steps.push(cur.st === 'failed' ? { c: 'bad', text: L('Declined by issuer (simulated)', 'رفضها المُصدِر (محاكاة)') } : cur.st === 'pending' ? { c: 'wait', text: L('No response · status unknown', 'لا استجابة · الحالة غير معروفة') } : { c: 'ok', text: L('Authorized', 'تم الاعتماد') });
+      else steps.push(cur.st === 'succeeded' ? { c: 'ok', text: L('Customer approved', 'وافق العميل') } : cur.st === 'pending' ? { c: 'wait', text: L('Awaiting customer approval', 'بانتظار موافقة العميل') } : this.dStatus(cur) === 'cancelled' ? { c: 'bad', text: L('Cancelled by the merchant', 'ألغاه التاجر') } : cur.st === 'expired' ? { c: 'bad', text: L('Expired · the customer did not approve in time', 'انتهت المهلة · لم يوافق العميل في الوقت') } : { c: 'bad', text: L('Not approved', 'لم يوافق') });
+      if (cur.cap > 0) steps.push({ c: 'ok', text: L('Captured ' + money(cur.cap), 'تم تحصيل ' + money(cur.cap)) });
+      else if (cur.st === 'authorized') steps.push({ c: 'wait', text: L('Not captured yet · no money moved', 'غير مُحصَّل بعد · لم تُحرَّك أموال') });
+      else steps.push({ c: 'bad', text: L('Nothing captured', 'لم يُحصَّل شيء') });
+    }
+    const stepsR = steps.map((x) => ({ icon: x.c === 'ok' ? 'check_circle' : x.c === 'bad' ? 'cancel' : 'schedule', color: x.c === 'ok' ? 'var(--success, #15803D)' : x.c === 'bad' ? 'var(--error)' : 'var(--warning)', text: x.text }));
+    const canCapture = !!cur && cur.st === 'authorized';
+    const canRetry = !!cur && !!cur.key && cur.m === 'card';
+    const capFullLabel = L('Capture full · ', 'تحصيل كامل · ') + money(cur ? cur.auth : 0);
+    const capHalfLabel = L('Capture 50% · ', 'تحصيل 50% · ') + money(cur ? Math.round(cur.auth * 50) / 100 : 0);
+    const resColor = rc;
+
+    const flowDef = [
+      ['home', L('Home dashboard', 'الرئيسية'), L('Totals, recent rows and callout read the shared list', 'الإجماليات والصفوف الأخيرة تقرأ القائمة المشتركة')],
+      ['hub', L('Payments · choose method', 'المدفوعات · اختر الوسيلة'), L('Card, mobile wallet, InstaPay or cash', 'بطاقة أو محفظة أو إنستاباي أو نقدي')],
+      ['amount', L('Amount', 'المبلغ'), L('Keypad, EGP 1.00 to 50,000.00, optional reference', 'لوحة أرقام، من 1.00 إلى 50,000.00 ج.م، مرجع اختياري')],
+      ['detail', L('Method details', 'تفاصيل الوسيلة'), L('Test cards, outcome, cash confirmation', 'بطاقات تجريبية، النتيجة، تأكيد النقد')],
+      ['confirm', L('Confirm + idempotency key', 'التأكيد + مفتاح منع التكرار'), L('Key is fixed per attempt', 'المفتاح ثابت لكل محاولة')],
+      ['processing', L('Processing', 'المعالجة'), L('Simulated gateway call, double-tap blocked', 'نداء بوابة محاكاة، والنقر المزدوج مُعطَّل')],
+      ['wait', L('Customer decision', 'قرار العميل'), L('Wallet and InstaPay: approve, expire or cancel', 'المحفظة وإنستاباي: موافقة أو انتهاء أو إلغاء')],
+      ['result', L('Result', 'النتيجة'), L('Succeeded, authorized, failed, expired, status unknown', 'ناجحة، مُعتمدة، فاشلة، منتهية، حالة غير معروفة')],
+      ['capture', L('Capture', 'التحصيل'), L('Full or 50% capture of an authorization', 'تحصيل كامل أو 50% لاعتماد')],
+      ['tx', L('Transactions list', 'قائمة المعاملات'), L('The same list the flow writes to', 'القائمة نفسها التي تكتب فيها الدفعات')],
+      ['txd', L('Transaction detail', 'تفاصيل المعاملة'), L('Timeline, refunds, release, explain link', 'الخط الزمني والاستردادات والإفراج ورابط الشرح')],
+      ['refund', L('Refund', 'استرداد'), L('Partial refund, pending to completed or failed', 'استرداد جزئي، من معلّق إلى مكتمل أو فاشل')],
+      ['settle', L('Settlement batch', 'دفعة التسوية'), L('Captured card, wallet and InstaPay; cash never', 'بطاقة ومحفظة وإنستاباي مُحصَّلة؛ النقد لا يدخل أبدًا')],
+      ['recon', L('Reconciliation', 'المطابقة'), L('Resolve unknown statuses with the gateway', 'حسم الحالات غير المعروفة مع البوابة')],
+      ['learn', L('Learn · FinTech and Security Lab', 'تعلّم · التعلّم المالي ومختبر الأمان'), L('Lessons, quiz, glossary and four security experiments', 'دروس واختبار ومسرد وأربع تجارب أمنية')],
+    ];
+    const DONE_SCREENS = ['home', 'hub', 'amount', 'detail', 'confirm', 'processing', 'wait', 'result', 'capture', 'tx', 'txd', 'refund', 'settle', 'recon', 'learn'];
+    const PARTLY_SCREENS = ['capture'];
+    const flow = flowDef.map((f, i) => ({ n: String(i + 1), name: f[1], note: f[2], pick: this.flowPick(f[0]), st: PARTLY_SCREENS.includes(f[0]) ? 'contrast' : DONE_SCREENS.includes(f[0]) ? 'check_circle' : 'radio_button_unchecked', stStyle: 'font-size: 20px; color: ' + (PARTLY_SCREENS.includes(f[0]) ? 'var(--warning)' : DONE_SCREENS.includes(f[0]) ? 'var(--success, #15803D)' : 'var(--text-tertiary)') + ';', here: s.screen === f[0] ? L('You are here', 'أنت هنا') : '', style: 'display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--surface); ' + (s.screen === f[0] ? 'box-shadow: inset 0 0 0 2px var(--primary);' : 'box-shadow: inset 0 0 0 1px var(--border);') }));
+    const extraT = {
+      settling: L('Settling (T+1)', 'قيد التسوية (T+1)'),
+      available: L('Available to pay out', 'متاح للصرف'),
+      recent: L('Recent transactions', 'أحدث المعاملات'),
+      seeAll: L('See all', 'عرض الكل'),
+      quick: L('Quick actions', 'إجراءات سريعة'),
+      activity: L('Sandbox activity · today', 'النشاط التجريبي · اليوم'),
+      lifecycle: L('Lifecycle of this payment', 'دورة حياة هذه الدفعة'),
+    };
+    Object.assign(t, extraT);
+
+    const isTxd = is('txd'), isRf = is('refund'), isSettle = is('settle'), isRecon = is('recon');
+    Object.assign(t, {
+      navSettle: L('Settlement', 'التسوية'), navRecon: L('Reconciliation', 'المطابقة'),
+      txEmpty: L('No payments match this filter.', 'لا توجد دفعات تطابق هذا الفلتر.'),
+      detRefund: L('Refund', 'استرداد'), detVoid: L('Release authorization', 'الإفراج عن الاعتماد'),
+      explain: L('Explain this status', 'اشرح هذه الحالة'),
+      tlTitle: L('Timeline', 'الخط الزمني'), refundsTitle: L('Refunds', 'الاستردادات'),
+      simRefundOk: L('Refund completes', 'اكتمل الاسترداد'), simRefundFail: L('Refund fails', 'فشل الاسترداد'),
+      rfRemain: L('Refundable now', 'القابل للاسترداد الآن'), rfAmtLabel: L('Amount', 'المبلغ'), rfReasonLabel: L('Reason', 'السبب'),
+      rfSubmit: L('Submit refund', 'أرسل الاسترداد'),
+      batchTitle: L("Today's batch · settles T+1", 'دفعة اليوم · تُسوّى خلال T+1'),
+      batchNote: L('Captured card, wallet and InstaPay amounts minus completed refunds. Cash is never in a batch.', 'مبالغ البطاقة والمحفظة وإنستاباي المُحصَّلة مطروحًا منها الاستردادات المكتملة. النقد لا يدخل أي دفعة أبدًا.'),
+      batchEmpty: L('No captured payments in this session yet.', 'لا توجد مدفوعات مُحصَّلة في هذه الجلسة بعد.'),
+      reconIntro: L('Payments with unknown status and refunds still pending. Ask the gateway, then resolve. Never charge the customer again to find out.', 'مدفوعات بحالة غير معروفة واستردادات ما زالت معلّقة. اسأل البوابة ثم احسم الحالة. لا تخصم من العميل مرة أخرى لتعرف.'),
+      reconYes: L('Gateway: completed', 'البوابة: مكتمل'), reconNo: L('Gateway: not completed', 'البوابة: غير مكتمل'),
+      reconEmpty: L('Nothing to reconcile. Every status is known.', 'لا شيء للمطابقة. كل الحالات معروفة.'),
+      cashExcluded: L('Cash refunds are recorded at the counter and never appear in a batch.', 'تُسجَّل استردادات النقد عند الكاشير ولا تظهر في أي دفعة.'),
+    });
+    const FILT = [['all', L('All', 'الكل')], ['succeeded', L('Succeeded', 'ناجحة')], ['authorized', L('Authorized', 'مُعتمد')], ['pending', L('Pending', 'قيد الانتظار')], ['failed', L('Failed', 'فشلت')], ['refunded', L('Refunded', 'مُستردّ')]];
+    const matchF = (x, f) => f === 'all' || (f === 'refunded' ? ['refunded', 'partial'].includes(this.dStatus(x)) : f === 'failed' ? ['failed', 'expired', 'voided'].includes(x.st) : this.dStatus(x) === f);
+    const filters = FILT.map(([id, label]) => ({ label, pressed: s.filter === id, style: chip(s.filter === id), pick: () => this.setFilter(id) }));
+    const listRows = s.txs.filter((x) => matchF(x, s.filter)).map(txRow);
+    const noRows = listRows.length === 0;
+    const rowBtn = 'display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; text-align: start; background: none; border: 0; border-bottom: 1px solid var(--border); padding: 12px 14px; cursor: pointer; font: inherit; color: inherit;';
+
+    const sel = s.txs.find((x) => x.id === s.sel) || null;
+    const selRow = sel ? txRow(sel) : null;
+    const remaining = sel ? this.refundable(sel) : 0;
+    const canRefund = remaining > 0;
+    const canVoid = !!sel && sel.st === 'authorized';
+    const canCapt = !!sel && sel.st === 'authorized';
+    const OK = 'var(--success, #15803D)';
+    const tl = [];
+    if (sel) {
+      tl.push({ icon: 'check_circle', color: OK, text: L('Created · ' + sel.time, 'أُنشئت · ' + sel.time) });
+      if (sel.m === 'cash') tl.push({ icon: 'check_circle', color: OK, text: L('Recorded at the counter', 'سُجّل عند الكاشير') });
+      else if (sel.m === 'card') tl.push(sel.st === 'failed' ? { icon: 'cancel', color: 'var(--error)', text: L('Declined by issuer (simulated)', 'رفضها المُصدِر (محاكاة)') } : sel.st === 'pending' ? { icon: 'schedule', color: 'var(--warning)', text: L('No response · status unknown', 'لا استجابة · الحالة غير معروفة') } : { icon: 'check_circle', color: OK, text: L('Authorized', 'تم الاعتماد') });
+      else tl.push(sel.st === 'pending' ? { icon: 'schedule', color: 'var(--warning)', text: L('Awaiting customer approval', 'بانتظار موافقة العميل') } : sel.st === 'succeeded' ? { icon: 'check_circle', color: OK, text: L('Customer approved', 'وافق العميل') } : this.dStatus(sel) === 'cancelled' ? { icon: 'block', color: 'var(--error)', text: L('Cancelled by the merchant', 'ألغاه التاجر') } : sel.st === 'expired' ? { icon: 'timer_off', color: 'var(--error)', text: L('Expired · the customer did not approve in time', 'انتهت المهلة · لم يوافق العميل في الوقت') } : { icon: 'cancel', color: 'var(--error)', text: L('Not approved', 'لم يوافق') });
+      if (sel.cap > 0) tl.push({ icon: 'check_circle', color: OK, text: L('Captured ' + money(sel.cap), 'تم تحصيل ' + money(sel.cap)) });
+      else if (sel.st === 'authorized') tl.push({ icon: 'schedule', color: 'var(--warning)', text: L('Not captured yet · no money moved', 'غير مُحصَّل بعد · لم تُحرَّك أموال') });
+      else if (sel.st === 'voided') tl.push({ icon: 'undo', color: 'var(--text-secondary)', text: L('Authorization released · nothing captured', 'أُفرج عن الاعتماد · لم يُحصَّل شيء') });
+      this.refsOf(sel).forEach((r) => tl.push(r.st === 'refunded' ? { icon: 'check_circle', color: OK, text: L('Refunded ' + money(r.amt), 'مُستردّ ' + money(r.amt)) } : r.st === 'failed' ? { icon: 'cancel', color: 'var(--error)', text: L('Refund failed · no money moved', 'فشل الاسترداد · لم تُحرَّك أموال') } : { icon: 'schedule', color: 'var(--warning)', text: L('Refund ' + money(r.amt) + ' pending', 'استرداد ' + money(r.amt) + ' معلّق') }));
+    }
+    const refundRows = sel ? this.refsOf(sel).map((r) => ({
+      label: r.st === 'pending' ? L('Pending', 'معلّق') : r.st === 'refunded' ? L('Refunded', 'مُستردّ') : L('Failed', 'فشل'),
+      amt: money(r.amt), notPending: r.st !== 'pending', btnRow: r.st !== 'pending' ? 'display: none;' : 'display: flex; gap: 8px;',
+      ok: () => this.settleRefund(sel.id, r.id, true), no: () => this.settleRefund(sel.id, r.id, false),
+    })) : [];
+    const hasRefunds = refundRows.length > 0;
+    const dTitle = selRow ? selRow.title : '';
+    const dAmt = sel ? money(sel.amt) : '';
+    const dKind = selRow ? selRow.kind : 'pending';
+    const dIcon = selRow ? selRow.bicon : 'schedule';
+    const dLabel = selRow ? selRow.label : '';
+
+    const rfRemainShown = money(remaining);
+    const rfDone = sel ? this.refsOf(sel).filter((r) => r.st === 'refunded').reduce((a, r) => a + r.amt, 0) : 0;
+    const rfHeld = sel ? this.refsOf(sel).filter((r) => r.st === 'pending').reduce((a, r) => a + r.amt, 0) : 0;
+    const rfList = sel ? this.refsOf(sel) : [];
+    const rfLast = rfList.length ? rfList[rfList.length - 1] : null;
+    const rfStLabel = (st) => (st === 'refunded' ? L('Completed', 'مكتمل') : st === 'failed' ? L('Failed', 'فشل') : L('Pending', 'معلّق'));
+    const rfOver = Math.round((remaining + 100) * 100) / 100;
+    const rfAmtVal = s.rfAmt === 'full' ? remaining : s.rfAmt === 'half' ? Math.round(remaining * 50) / 100 : rfOver;
+    const rfNone = remaining <= 0;
+    const rfTooMuch = rfAmtVal > remaining;
+    const rfOk = !rfNone && !rfTooMuch && rfAmtVal > 0;
+    const rfErr = rfNone ? L('Nothing is left to refund on this payment.', 'لا يتبقى شيء للاسترداد في هذه الدفعة.') : rfTooMuch ? L('Amount ' + money(rfAmtVal) + ' is more than the refundable ' + money(remaining) + '. Choose an amount up to ' + money(remaining) + '.', 'المبلغ ' + money(rfAmtVal) + ' أكبر من القابل للاسترداد ' + money(remaining) + '. اختر مبلغًا حتى ' + money(remaining) + '.') : '';
+    Object.assign(t, {
+      rfCaptured: L('Captured', 'المُحصَّل'), rfDoneLabel: L('Refunded so far', 'المُستردّ حتى الآن'), rfHeldLabel: L('Pending refunds', 'استردادات معلّقة'),
+      rfLatestLabel: L('Latest refund', 'آخر استرداد'), rfNoneYet: L('No refunds yet', 'لا توجد استردادات بعد'),
+      rfHold: L('A pending refund holds its amount but is not counted as refunded until it completes. A failed refund counts for nothing.', 'الاسترداد المعلّق يحجز مبلغه لكنه لا يُحسب مُستردًّا حتى يكتمل. الاسترداد الفاشل لا يُحسب أبدًا.'),
+      rfOverLabel: L('More than remaining', 'أكثر من المتبقي'),
+    });
+    const rfOpts = [{ id: 'full', label: L('Full remaining · ', 'المتبقي كاملًا · ') + money(remaining) }, { id: 'half', label: L('Half of remaining · ', 'نصف المتبقي · ') + money(Math.round(remaining * 50) / 100) }, { id: 'over', label: t.rfOverLabel + ' · ' + money(rfOver) }].map((o) => ({ label: o.label, pressed: s.rfAmt === o.id, style: opt(s.rfAmt === o.id), pick: () => this.setState({ rfAmt: o.id }) }));
+    const rfReasons = [{ id: 'customer', en: 'Customer request', ar: 'طلب العميل' }, { id: 'duplicate', en: 'Duplicate charge', ar: 'خصم مكرر' }, { id: 'wrong', en: 'Wrong amount', ar: 'مبلغ خاطئ' }].map((o) => ({ label: L(o.en, o.ar), pressed: s.rfReason === o.id, style: opt(s.rfReason === o.id), pick: () => this.setState({ rfReason: o.id }) }));
+    const rfWarn = sel && sel.m === 'cash' ? L('Cash is handed back at the counter. PayFlow records it and moves no money.', 'يُعاد النقد من الكاشير. يُسجّل PayFlow العملية ولا يحرّك أي أموال.') : L('The refund goes back to the card or wallet as a pending refund. It counts once it completes.', 'تُعاد الأموال إلى البطاقة أو المحفظة كاسترداد معلّق. يُحتسب عند اكتماله.');
+    const rfArmed = s.arm === 'refund';
+    const rfSubmitLabel = (rfArmed ? L('Confirm refund', 'تأكيد الاسترداد') : t.rfSubmit) + ' · ' + money(rfAmtVal);
+
+    const newX = s.txs.filter((x) => !x.seed);
+    const batch = [];
+    newX.forEach((x) => { if (x.m !== 'cash' && x.cap > 0) batch.push({ text: T(x.t) + ' · ' + x.time, amt: '+' + money(x.cap) }); });
+    newX.forEach((x) => this.refsOf(x).forEach((r) => { if (x.m !== 'cash' && r.st === 'refunded') batch.push({ text: L('Refund · ', 'استرداد · ') + T(x.t), amt: '−' + money(r.amt) }); }));
+    const netToday = money(sumNonCash - this.refunded(newX, true));
+    const noBatch = batch.length === 0;
+
+    const reconRows = s.txs.filter((x) => x.st === 'pending' && x.m === 'card').map((x) => ({
+      title: T(x.t), sub: money(x.amt) + ' · ' + L('status unknown', 'الحالة غير معروفة'),
+      ok: () => this.resolveTx(x.id, true), no: () => this.resolveTx(x.id, false),
+    })).concat(s.txs.flatMap((x) => this.refsOf(x).filter((r) => r.st === 'pending').map((r) => ({
+      title: L('Refund · ', 'استرداد · ') + T(x.t), sub: money(r.amt) + ' · ' + L('pending', 'معلّق'),
+      ok: () => this.settleRefund(x.id, r.id, true), no: () => this.settleRefund(x.id, r.id, false),
+    }))));
+    const hasRecon = reconRows.length > 0;
+    const noRecon = !hasRecon;
+
+    Object.assign(t, {
+      finIntro: L('Short lessons on how PayFlow’s payment states work. Each one links to the status it explains.', 'دروس قصيرة عن حالات الدفع في PayFlow. كل درس مرتبط بالحالة التي يشرحها.'),
+      secIntro: L('Simulated experiments. Each one shows what a control changes and where it needs a physical device. Nothing here changes your phone.', 'تجارب محاكاة. كل تجربة تُظهر ما يغيّره ضابط الأمان وأين يحتاج جهازًا فعليًا. لا شيء هنا يغيّر هاتفك.'),
+      quizCta: L('Take the quiz', 'ابدأ الاختبار'), glossCta: L('Glossary', 'المسرد'),
+      quizTitle: L('Quiz · 4 questions', 'اختبار · 4 أسئلة'),
+      quizDoneBody: L('Each question explains the right answer. Retake any time.', 'كل سؤال يشرح الإجابة الصحيحة. يمكنك الإعادة في أي وقت.'),
+      quizRetake: L('Retake quiz', 'أعد الاختبار'), outcome: L('What happens', 'ماذا يحدث'),
+      legend: L('Check: built and browser-tested. Half circle: built, some paths untested. Empty circle: not built.', 'علامة الصح: مبني ومُختبر في المتصفح. نصف دائرة: مبني، وبعض المسارات غير مُختبرة. دائرة فارغة: غير مبني.'),
+    });
+    const Ls = this.LESSONS.find((l) => l.id === s.ls) || this.LESSONS[0];
+    const lessonV = {
+      lesson: { title: T(Ls.title), body: Ls.body.map((b) => ({ text: T(b) })), diagram: Ls.diagram.map((d) => ({ text: T(d) })), fromTxShow: s.ret.lesson === 'txd', fromTx: L('Opened from a payment. The status you tapped is explained here.', 'فُتح من دفعة. الحالة التي نقرتها مُفسَّرة هنا.'), quizGo: () => this.openScreen('quiz', 'lesson', { qi: 0, qPick: null, qScore: 0, qDone: false }), glossGo: () => this.openScreen('gloss', 'lesson') },
+      lessonChips: this.LESSONS.map((l) => ({ label: T(l.title), pressed: s.ls === l.id, style: chip(s.ls === l.id), pick: () => this.setState({ ls: l.id }) })),
+    };
+    const QQ = this.QUIZ[s.qi];
+    const pk = s.qPick;
+    const quizV = {
+      quizActive: !s.qDone, quizDone: s.qDone,
+      qProg: L('Question ', 'السؤال ') + (s.qi + 1) + ' / ' + this.QUIZ.length,
+      qText: T(QQ.q),
+      qOpts: QQ.opts.map((o, i) => ({ label: T(o), style: 'display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; text-align: start; border: 0; border-radius: 12px; padding: 12px 14px; min-height: 48px; cursor: pointer; font: 500 16px/24px var(--font-sans); color: var(--text-primary); background: var(--surface); box-shadow: ' + (pk !== null && i === QQ.ok ? 'inset 0 0 0 2px var(--success, #15803D)' : pk === i ? 'inset 0 0 0 2px var(--error)' : 'inset 0 0 0 1px var(--border)') + ';', pick: () => this.pickAnswer(i) })),
+      qShowFb: pk !== null,
+      qFeedback: pk !== null ? (pk === QQ.ok ? L('Correct. ', 'صحيح. ') : L('Not quite. ', 'ليس تمامًا. ')) + T(QQ.why) : '',
+      qFbIcon: pk === QQ.ok ? 'check_circle' : 'info',
+      qNextLabel: s.qi + 1 < this.QUIZ.length ? L('Next question', 'السؤال التالي') : L('See my score', 'عرض نتيجتي'),
+      nextQ: () => this.nextQuestion(),
+      scoreText: L('You got ', 'أجبت ') + s.qScore + ' / ' + this.QUIZ.length + L(' right.', ' بشكل صحيح.'),
+      restartQuiz: () => this.restartQuiz(),
+    };
+    const EE = this.EXPS.find((e) => e.id === s.ex) || this.EXPS[0];
+    const xCur = { rest: s.xs.rest, shot: s.xs.shot, pinOn: s.xs.pinOn ? 'on' : 'off', proxy: s.xs.proxy ? 'on' : 'off', bio: 'x' }[EE.id];
+    const isOn = xCur === 'on' || xCur === 'encrypted';
+    const flipFns = {
+      rest: () => this.setXs('rest', s.xs.rest === 'encrypted' ? 'plain' : 'encrypted'),
+      shot: () => this.setXs('shot', s.xs.shot === 'on' ? 'off' : 'on'),
+      pinOn: () => this.setXs('pinOn', !s.xs.pinOn),
+      proxy: () => this.setXs('proxy', !s.xs.proxy),
+    };
+    const devNote = EE.tag === 'device'
+      ? (s.device === 'emulator' ? L('Switch Device context to Physical device to read this result. The label changes nothing else.', 'بدّل سياق الجهاز إلى جهاز فعلي لقراءة هذه النتيجة. التسمية لا تغيّر شيئًا آخر.') : L('Physical device context selected. This result is an educational label only.', 'تم اختيار سياق الجهاز الفعلي. هذه النتيجة تسمية تعليمية فقط.'))
+      : (EE.tag === 'better' && s.device === 'emulator' ? L('Runs on the emulator, but the strong form of this protection needs a physical device with a secure element.', 'يعمل على المحاكي، لكن الصورة القوية لهذه الحماية تحتاج جهازًا فعليًا فيه عنصر آمن.') : '');
+    const expV = {
+      expCat: T(EE.cat), expTitle: T(EE.title), expTag: T(this.TAGS[EE.tag]), expTagCls: this.TAGCLS[EE.tag], expWhy: T(EE.why),
+      expToggleable: !!EE.control, expControl: EE.control ? T(EE.control) : '',
+      expOn: isOn, expFlip: flipFns[EE.id] || (() => {}), expOnLabel: isOn ? L('On', 'مُفعَّل') : L('Off', 'مُعطَّل'), expBtnCls: isOn ? 'pf-btn primary sm' : 'pf-btn sm',
+      expOutcome: T(this.OUT[EE.id][xCur]), expHasNote: devNote !== '', expNote: devNote,
+    };
+    const lrn = {
+      isFin: s.lt === 'fin', isSec: s.lt === 'sec',
+      isLesson: is('lesson'), isQuiz: is('quiz'), isGloss: is('gloss'), isExp: is('exp'),
+      explainTx: this.explainTx,
+      lessonTabs: [['fin', L('FinTech Learning', 'التعلّم المالي')], ['sec', L('Security Lab', 'مختبر الأمان')]].map(([id, label]) => ({ label, pressed: s.lt === id, style: chip(s.lt === id), pick: () => this.setState({ lt: id }) })),
+      trackRows: this.LESSONS.map((l) => ({ title: T(l.title), sub: T(l.sub), icon: l.icon, chev: ar ? 'chevron_left' : 'chevron_right', pick: () => this.openScreen('lesson', 'learn', { ls: l.id }) })),
+      expRows: this.EXPS.map((e) => ({ cat: T(e.cat), title: T(e.title), tag: T(this.TAGS[e.tag]), tagCls: this.TAGCLS[e.tag], pick: () => this.openScreen('exp', 'learn', { ex: e.id }) })),
+      openQuizLearn: () => this.openScreen('quiz', 'learn', { qi: 0, qPick: null, qScore: 0, qDone: false }),
+      openGlossLearn: () => this.openScreen('gloss', 'learn'),
+      glossRows: this.GLOSS.map((g) => ({ term: T(g.term), def: T(g.def) })),
+      ...lessonV, ...quizV, ...expV,
+    };
+    Object.assign(t, {
+      whatNext: L('What happens next', 'ماذا يحدث بعد ذلك'),
+      fRetry: L('Retry allowed', 'يمكن إعادة المحاولة'),
+      fNew: L('New payment needed', 'دفعة جديدة مطلوبة'),
+      fInq: L('Status check needed', 'يلزم التحقق من الحالة'),
+      devInfo: L('Developer details', 'تفاصيل المطوّر'),
+      startNew: L('Start new payment', 'ابدأ دفعة جديدة'),
+    });
+    const mkFail = (x) => {
+      const k = this.failKey(x);
+      if (!k) return { show: false, code: '', rT: '', rN: '', rI: '' };
+      const f = this.FAILDEF[k];
+      const yn = (b) => (b ? L('Yes', 'نعم') : L('No', 'لا'));
+      return { show: true, code: f.code, rT: yn(f.retry), rN: yn(f.newAttempt), rI: yn(f.inquiry) };
+    };
+    const failRes = mkFail(cur);
+    const failDet = mkFail(sel);
+    const failV = {
+      failRes, failDet,
+      canNewRes: failRes.show && this.FAILDEF[this.failKey(cur)].newAttempt,
+      canNewD: failDet.show && this.FAILDEF[this.failKey(sel)].newAttempt,
+      goPay: this.goPay,
+    };
+    Object.assign(t, {
+      tmTitle: L('Why the outcome is not confirmed', 'لماذا لم تُؤكَّد النتيجة'),
+      tmHttp: L('An HTTP timeout does not necessarily mean the payment failed. The server may have processed the request even though the client did not receive the response.', 'انتهاء مهلة HTTP لا يعني بالضرورة فشل الدفعة. ربما عالج الخادم الطلب رغم أن العميل لم يستلم الرد.'),
+      inqLearn: L('Status inquiry allows the client to retrieve the result of an existing payment operation without creating another payment.', 'الاستعلام عن الحالة يتيح للتطبيق معرفة نتيجة عملية دفع موجودة دون إنشاء دفعة أخرى.'),
+      confirmRefund: L('Confirm refund', 'تأكيد الاسترداد'),
+      confirmRefundNote: L('Confirm to send the refund. It stays pending until the gateway completes it and counts only after completion.', 'أكّد لإرسال الاسترداد. يبقى معلقًا حتى تكمله البوابة، ولا يُحتسب إلا بعد اكتماله.'),
+      confirmVoid: L('Confirm release', 'تأكيد الإفراج'),
+      tmWhy: L('Checking the original payment is safer than paying again. A new payment could charge the customer twice. A status check only reads the payment that already exists.', 'فحص الدفعة الأصلية أأمن من الدفع مرة أخرى. الدفعة الجديدة قد تخصم العميل مرتين. استعلام الحالة يقرأ الدفعة الموجودة فقط.'),
+      inqBtn: L('Check payment status', 'تحقق من حالة الدفع'),
+    });
+    const tmOf = (x) => {
+      const show = !!x && x.st === 'pending' && !!x.reason;
+      const showLog = !!x && (x.inqN || 0) > 0;
+      const last = x && x.inqLast === 'succeeded' ? L('captured', 'تم التحصيل') : x && x.inqLast === 'failed' ? L('failed', 'فشلت') : L('still pending', 'ما زالت قيد الانتظار');
+      return { show, showLog, log: showLog ? L('Status check on the original ' + x.id + ' · last result: ' + last + '. No new payment was created.', 'استعلام الحالة عن العملية الأصلية ' + x.id + ' · آخر نتيجة: ' + last + '. لم تُنشأ دفعة جديدة.') : '' };
+    };
+    const tmC = tmOf(cur);
+    const tmD2 = tmOf(sel);
+    const tmRows = [
+      { text: L('Network timeout: the app did not receive a response.', 'مهلة الشبكة: لم يستلم التطبيق ردًا.') },
+      { text: L('Server processing timeout: the server may have completed the payment.', 'مهلة معالجة الخادم: ربما أكمل الخادم الدفع.') },
+      { text: L('Unknown outcome: we do not know yet, so the payment stays pending.', 'نتيجة غير معروفة: لا نعرف بعد، لذلك تبقى الدفعة قيد الانتظار.') },
+      { text: L('Confirmed failure: the gateway says no money moved.', 'فشل مؤكد: تقول البوابة إنه لم تُحرَّك أي أموال.') },
+      { text: L('Confirmed success: the gateway says the amount was captured.', 'نجاح مؤكد: تقول البوابة إنه تم تحصيل المبلغ.') },
+    ];
+    const tmOut = { tmRows, showTm: tmC.show, showLog: tmC.showLog, inqLog: tmC.log, showTmD: tmD2.show, showLogD: tmD2.showLog, inqLogD: tmD2.log, inquire: this.inquire };
+    const idV = {
+      attShown: cur && cur.attempt ? cur.attempt : '—',
+      canSameKey: !!cur && cur.st === 'pending' && cur.m === 'card' && !!cur.key,
+    };
+    Object.assign(t, {
+      idExplain: L('An idempotency key is one unique ID for one payment operation. Create it once when the customer confirms, and send the same key on every retry. After a timeout the app cannot tell whether the payment happened. With the same key, the gateway returns the original result instead of charging again.', 'مفتاح منع التكرار معرّف واحد لعملية دفع واحدة. يُنشأ مرة واحدة عند تأكيد العميل، ويُرسَل المفتاح نفسه مع كل إعادة. بعد انتهاء المهلة لا يعرف التطبيق هل تمت الدفعة. مع المفتاح نفسه تُعيد البوابة النتيجة الأصلية بدلًا من خصم جديد.'),
+      ruleKey: L('Idempotency key: one per payment operation, reused on every retry.', 'مفتاح منع التكرار: واحد لكل عملية دفع، يُعاد استخدامه مع كل إعادة.'),
+      ruleAtt: L('Payment attempt: one per submission to the gateway. A same-key retry reuses it.', 'محاولة الدفع: واحدة لكل إرسال إلى البوابة. الإعادة بالمفتاح نفسه تعيد استخدامها.'),
+      ruleTx: L('Transaction: the record the gateway returns. A new operation gets its own.', 'المعاملة: السجل الذي تُعيده البوابة. كل عملية جديدة لها معاملتها.'),
+      idTx: L('Transaction', 'المعاملة'), idKey: L('Idempotency key', 'مفتاح منع التكرار'), idAtt: L('Payment attempt', 'محاولة الدفع'),
+      sameKeyNote: L('Idempotency helps prevent duplicate operations when a request is retried. Same key: the gateway returns the original operation and cannot charge twice.', 'السيناريو أ: المفتاح نفسه. تُعيد البوابة العملية الأصلية ولا يمكنها الخصم مرتين. آمن فقط لأن المفتاح أُعيد استخدامه.'),
+      scenBNote: L('Scenario B: new payment. A new key starts a different logical operation with its own transaction.', 'السيناريو ب: دفعة جديدة. مفتاح جديد يبدأ عملية منطقية مختلفة لها معاملتها.'),
+    });
+    // @@RETURN
+    return {
+      dir, flip, backIcon, screenTitle, t, ctxLabel, locales, modes, devices, reset: this.reset,
+      locale: s.locale, mode: s.mode, insTx: s.txs.length, insNew: newTx.length, sales, insKeys: Object.keys(s.idem).length,
+      insLast: newTx.length ? newTx[0].key : '—',
+      homeBar, hasBack, titleBar, goBack: this.goBack, showNav, navItems,
+      isHome, isHub, isAmt, isDet, isConf, isProc, isWait, isRes, isCap, isTx, isLearn, ...lrn, ...idV, ...tmOut, ...failV,
+      actions, stats, sessionNote, settling, available, callout, allRows, recentRows: allRows.slice(0, 4),
+      methods, flow, goHome: this.goHome, goTx: this.goTx,
+      mName, amtShown, amtErr, amtNotOk: !amtOk, keys, onRef: this.onRef, goDetail: this.goDetail, goConfirm: this.goConfirm,
+      cardOpts, capOpts, scenOpts, dCard, dPush, dCash, detailNotOk, cashOk: s.cashOk, toggleCash: this.toggleCash,
+      cCustomer, refShown, scenLabel, payLabel, keyShown, pay: this.pay,
+      approve: () => this.settle('approve'), expire: () => this.settle('expire'), cancel: () => this.settle('cancel'),
+      dupShown: s.dupNotice, rcBg: rc[0], rcFg: rc[1], rsIcon: rs.icon, rsLabel: rs.label,
+      resAmt: cur ? money(cur.amt) : '', resMsg, resId: cur ? cur.id : '—', stepsR, canCapture, canRetry,
+      retry: this.retry, viewTx: this.viewTx, done: this.done, goCapture: this.goCapture,
+      capAuth: cur ? money(cur.auth) : '', capFull: () => this.captureTo(1), capHalf: () => this.captureTo(0.5),
+      capFullLabel, capHalfLabel, resColor,
+      filters, listRows, noRows, rowBtn, isTxd, isRf, isSettle, isRecon, tlR: tl, refundRows, hasRefunds,
+      dTitle, dAmt, dKind, dIcon, dLabel, dId: sel ? sel.id : '', dKey: sel ? (sel.key || '—') : '',
+      canRefund, canVoid, canCapt, voidAuth: this.voidAuth, goRefund: this.goRefund, goSettle: this.goSettle, goRecon: this.goRecon,
+      rfRemainShown, rfOpts, rfReasons, rfWarn, rfSubmitLabel, rfArmed, confirmRefundNote: t.confirmRefundNote, voidLabel: s.arm === 'void' ? t.confirmVoid : t.detVoid, submitRefund: this.submitRefund,
+      rfCapturedShown: money(sel ? sel.cap : 0), rfDoneShown: money(rfDone), rfHeldShown: money(rfHeld),
+      rfLatestShown: rfLast ? rfStLabel(rfLast.st) + ' · ' + money(rfLast.amt) : t.rfNoneYet,
+      rfErr, rfErrShow: rfErr !== '', rfDisabled: !rfOk,
+      batch, netToday, noBatch, reconRows, hasRecon, noRecon,
+    };
+  }
+}
+</script>
+</body>
+</html>

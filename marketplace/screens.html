@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Marketplace screenshots</title>
+<style>
+  :root { --ink:#0f1726; --muted:#5a6475; --brand:#3538cd; --bg:#f6f7f9; --code:#12161f; --codeink:#e6e9ee; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1280px; height: 800px; overflow: hidden; background: var(--bg); font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
+  .slide { display: none; width: 1280px; height: 800px; padding: 64px; position: relative; }
+  .slide.on { display: flex; gap: 48px; align-items: center; }
+  .text { flex: 0 0 470px; }
+  h1 { font-size: 44px; line-height: 52px; letter-spacing: -0.5px; margin: 20px 0 16px; }
+  h2 { font-size: 36px; line-height: 44px; letter-spacing: -0.4px; margin-bottom: 14px; }
+  p.lead { font-size: 20px; line-height: 30px; color: var(--muted); }
+  ul { padding: 0; list-style: none; margin-top: 28px; }
+  li { font-size: 18px; line-height: 26px; padding: 8px 0 8px 30px; position: relative; }
+  li::before { content: ""; position: absolute; left: 0; top: 15px; width: 12px; height: 12px; border-radius: 4px; background: var(--brand); }
+  .logo { width: 72px; height: 72px; }
+  .phones { position: relative; flex: 1; height: 672px; }
+  .phone { position: absolute; width: 270px; height: 584px; border-radius: 36px; border: 8px solid #1b1f2a; overflow: hidden; background: #000; box-shadow: 0 24px 60px rgba(15,23,38,.25); }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: center 7%; display: block; }
+  .code { background: var(--code); color: var(--codeink); border-radius: 18px; padding: 22px 26px; font: 15px/23px "SF Mono", Menlo, monospace; white-space: pre; box-shadow: 0 18px 40px rgba(15,23,38,.18); }
+  .code .t { color: #8b94a5; font: 600 12px/16px -apple-system, sans-serif; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .k { color: #c4a7ff; } .s { color: #4ade9c; } .c { color: #8b94a5; } .n { color: #7db7ff; }
+  .stack { flex: 1; display: flex; flex-direction: column; gap: 22px; }
+  .rtl { font-family: "Geeza Pro", -apple-system, sans-serif; font-size: 16px; unicode-bidi: isolate; }
+  .tag { display: inline-block; background: #e0e2fd; color: #1b1c63; font: 600 14px/20px -apple-system, sans-serif; padding: 6px 12px; border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Overview -->
+<section class="slide" id="s1">
+  <div class="text">
+    <img class="logo" src="assets/pluginIcon.svg" alt="">
+    <h1>Claude DesignKit<br>for Compose</h1>
+    <p class="lead">Import a design system exported from Claude Design and get a Jetpack Compose theme, icons, components and strings in one step.</p>
+    <ul>
+      <li>Light and dark theme from the design tokens</li>
+      <li>Material icons reused, never duplicated</li>
+      <li>Buttons, chips, cards and status badges</li>
+      <li>English and Arabic strings, RTL ready</li>
+    </ul>
+  </div>
+  <div class="phones">
+    <div class="phone" style="left: 0; top: 70px;"><img src="assets/light.png" alt=""></div>
+    <div class="phone" style="left: 182px; top: 20px; z-index: 2;"><img src="assets/dark.png" alt=""></div>
+    <div class="phone" style="left: 364px; top: 70px;"><img src="assets/arabic.png" alt=""></div>
+  </div>
+</section>
+
+<!-- 2. Theme and icons -->
+<section class="slide" id="s2">
+  <div class="stack">
+    <span class="tag">Generated code, from a real export</span>
+    <h2>Tokens become a documented Compose theme</h2>
+    <div class="code"><span class="t">Color.kt</span><span class="k">data class</span> AppColors(
+    <span class="c">/** Primary buttons, active nav item, links, focus.
+     *  Never for money-received meaning (that is success). */</span>
+    <span class="k">val</span> primary: Color,
+    …
+)</div>
+    <div class="code"><span class="t">AppIcons.kt · Material icons referenced, not copied</span><span class="k">object</span> AppIcons {
+    <span class="k">val</span> Payments: ImageVector <span class="k">get</span>() = Icons.Outlined.<span class="n">Payments</span>
+    <span class="k">val</span> ReceiptLong: ImageVector <span class="k">get</span>() = Icons.AutoMirrored.Outlined.<span class="n">ReceiptLong</span>
+    <span class="k">val</span> QrCode2: ImageVector <span class="k">get</span>() = Icons.Outlined.<span class="n">QrCode2</span>
+    <span class="k">val</span> ArrowBack: ImageVector <span class="k">get</span>() = Icons.AutoMirrored.Outlined.<span class="n">ArrowBack</span>
+}</div>
+  </div>
+  <div class="phones" style="flex: 0 0 300px;">
+    <div class="phone" style="left: 10px; top: 44px;"><img src="assets/light.png" alt=""></div>
+  </div>
+</section>
+
+<!-- 3. Localization -->
+<section class="slide" id="s3">
+  <div class="stack">
+    <span class="tag">Merged into your strings.xml</span>
+    <h2>Bilingual text, ready for stringResource()</h2>
+    <div class="code"><span class="t">values/strings.xml</span><span class="c">&lt;!-- Claude Design Importer: begin --&gt;</span>
+&lt;string name=<span class="s">"transactions"</span>&gt;Transactions&lt;/string&gt;
+&lt;string name=<span class="s">"sales_today"</span>&gt;Sales today&lt;/string&gt;
+&lt;string name=<span class="s">"back_text"</span>&gt;Back&lt;/string&gt;</div>
+    <div class="code"><span class="t">values-ar/strings.xml</span><span class="c">&lt;!-- Claude Design Importer: begin --&gt;</span>
+&lt;string name=<span class="s">"transactions"</span>&gt;<span class="rtl">المعاملات</span>&lt;/string&gt;
+&lt;string name=<span class="s">"sales_today"</span>&gt;<span class="rtl">مبيعات اليوم</span>&lt;/string&gt;
+&lt;string name=<span class="s">"back_text"</span>&gt;<span class="rtl">رجوع</span>&lt;/string&gt;</div>
+  </div>
+  <div class="phones" style="flex: 0 0 300px;">
+    <div class="phone" style="left: 10px; top: 44px;"><img src="assets/arabic.png" alt=""></div>
+  </div>
+</section>
+
+<script>
+  const n = new URLSearchParams(location.search).get("n") || "1";
+  document.getElementById("s" + n).classList.add("on");
+</script>
+</body>
+</html>

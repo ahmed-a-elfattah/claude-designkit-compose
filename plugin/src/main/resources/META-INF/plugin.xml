@@ -1,0 +1,57 @@
+<idea-plugin>
+    <id>com.abdelfattah.ahmed.designimporter</id>
+    <name>Claude DesignKit for Compose</name>
+    <vendor>Ahmed Abdelfattah</vendor>
+    <description><![CDATA[
+        Turn a design system exported from <b>Claude Design</b> into ready-to-use <b>Jetpack Compose</b> code in your Android module.
+        <br/><br/>
+        <b>What it generates</b>
+        <ul>
+            <li><b>Theme</b>: <code>AppTheme</code> with light/dark colors, type scale, shapes, spacing, elevation and size tokens,
+                mapped onto Material 3. Each token keeps the design's usage note as KDoc.</li>
+            <li><b>Icons without duplicates</b>: icons the design uses that already exist in Material Icons are referenced,
+                not copied. Material Symbols names map to the Compose icon of the same name; SVG icons that match a Material
+                icon's shape are reused. Only custom icons are generated, as <code>ImageVector</code> or vector drawables.</li>
+            <li><b>Components</b>: <code>AppButton</code>, <code>AppTextField</code>, <code>AppCard</code>, <code>AppChip</code>
+                and <code>AppBadge</code>, with the variants defined in the design's CSS, each with <code>@Preview</code>s.</li>
+            <li><b>Localization</b>: bilingual UI text in the prototype is merged into <code>values/strings.xml</code> and
+                <code>values-ar/strings.xml</code>, inside a marked block that re-imports replace without touching your own strings.</li>
+        </ul>
+        <b>How to use</b>
+        <ol>
+            <li>Export your design system from Claude Design (zip or folder).</li>
+            <li>Run <b>Tools › Import Claude Design System…</b> and pick the export.</li>
+            <li>Review the preview: target module, package, icon format, which Material icons to reuse and which strings to include.</li>
+            <li>Click <b>Import</b>. Run <b>Re-import Claude Design System</b> whenever the design changes.</li>
+        </ol>
+        Re-imports only touch files the plugin generated; hand-written files are never overwritten. The plugin also adds the
+        Material icons dependency to your module when it's needed.
+        <br/><br/>
+        <i>Independent plugin, not affiliated with or endorsed by Anthropic.</i>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.android</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Claude Design Importer" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <group id="DesignImporter.Group">
+            <action id="DesignImporter.Import"
+                    class="dev.designimporter.plugin.ImportAction"
+                    text="Import Claude Design System…"
+                    description="Generate Compose theme, icons, components and strings from a Claude Design export"/>
+            <action id="DesignImporter.Reimport"
+                    class="dev.designimporter.plugin.ReimportAction"
+                    text="Re-import Claude Design System"
+                    description="Import the last Claude Design export again"/>
+            <separator/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </group>
+        <reference ref="DesignImporter.Import">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </reference>
+    </actions>
+</idea-plugin>
