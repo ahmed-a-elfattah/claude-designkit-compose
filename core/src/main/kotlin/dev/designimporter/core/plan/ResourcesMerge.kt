@@ -5,10 +5,11 @@ package dev.designimporter.core.plan
  * so re-imports replace only that block and never the user's own entries.
  */
 object ResourcesMerge {
-    const val BEGIN = "<!-- Claude Design Importer: begin. Generated; edits between these markers are replaced on re-import -->"
-    const val END = "<!-- Claude Design Importer: end -->"
+    const val BEGIN = "<!-- Claude DesignKit: begin. Generated; edits between these markers are replaced on re-import -->"
+    const val END = "<!-- Claude DesignKit: end -->"
 
-    private val block = Regex("""[ \t]*<!-- Claude Design Importer: begin.*?-->.*?<!-- Claude Design Importer: end -->[ \t]*\r?\n?""", RegexOption.DOT_MATCHES_ALL)
+    /** Matches the current markers and the "Claude Design Importer" markers written by earlier versions. */
+    private val block = Regex("""[ \t]*<!-- Claude (?:DesignKit|Design Importer): begin.*?-->.*?<!-- Claude (?:DesignKit|Design Importer): end -->[ \t]*\r?\n?""", RegexOption.DOT_MATCHES_ALL)
 
     fun hasBlock(text: String) = block.containsMatchIn(text)
 

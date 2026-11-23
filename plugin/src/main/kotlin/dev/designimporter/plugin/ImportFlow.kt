@@ -106,7 +106,7 @@ object ImportFlow {
             add("$material icons reuse Material, ${r.icons.size - material} generated")
             if (r.dependencyEdits.isNotEmpty()) add("added ${if (r.dependencies.extended) "material-icons-extended" else "material-icons-core"}; sync Gradle")
         }
-        val notification = NotificationGroupManager.getInstance().getNotificationGroup("Claude Design Importer")
+        val notification = NotificationGroupManager.getInstance().getNotificationGroup("Claude DesignKit")
             .createNotification("Design system imported", parts.joinToString("<br>"), NotificationType.INFORMATION)
         themeFile?.let { f ->
             notification.addAction(NotificationAction.createSimple("Open ${r.config.themeName}") { FileEditorManager.getInstance(project).openFile(f, true) })
@@ -124,7 +124,7 @@ object ImportFlow {
     }
 
     private fun notify(project: Project, title: String, content: String, type: NotificationType) {
-        NotificationGroupManager.getInstance().getNotificationGroup("Claude Design Importer")
+        NotificationGroupManager.getInstance().getNotificationGroup("Claude DesignKit")
             .createNotification(title, content, type).notify(project)
     }
 }

@@ -113,6 +113,6 @@ object ImportPlanner {
     private fun isOurs(target: Path, path: String, previous: Set<String>): Boolean {
         if (path in previous) return true
         val head = Files.newInputStream(target).use { it.readNBytes(400) }.toString(Charsets.UTF_8)
-        return head.contains(GeneratedFile.HEADER)
+        return GeneratedFile.hasHeader(head)
     }
 }
