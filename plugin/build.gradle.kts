@@ -78,6 +78,8 @@ intellijPlatform {
     pluginVerification {
         ides {
             local(providers.gradleProperty("androidStudioPath"))
+            // 263 is where FileEditorManager.openFile(VirtualFile, Boolean) became deprecated; keep checking against it.
+            create(org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdea, "2026.3")
         }
     }
     signing {

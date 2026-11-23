@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -109,7 +109,7 @@ object ImportFlow {
         val notification = NotificationGroupManager.getInstance().getNotificationGroup("Claude DesignKit")
             .createNotification("Design system imported", parts.joinToString("<br>"), NotificationType.INFORMATION)
         themeFile?.let { f ->
-            notification.addAction(NotificationAction.createSimple("Open ${r.config.themeName}") { FileEditorManager.getInstance(project).openFile(f, true) })
+            notification.addAction(NotificationAction.createSimple("Open ${r.config.themeName}") { OpenFileDescriptor(project, f).navigate(true) })
         }
         if (r.dependencyEdits.isNotEmpty()) {
             notification.addAction(NotificationAction.createSimpleExpiring("Sync now") { syncGradle() })
