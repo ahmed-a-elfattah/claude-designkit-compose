@@ -60,6 +60,10 @@ intellijPlatform {
             untilBuild = provider { null }
         }
         changeNotes = """
+            <h3>1.0.1</h3>
+            <ul>
+              <li>Generated files and the strings block now use the Claude DesignKit name. Modules imported with 1.0.0 re-import cleanly.</li>
+            </ul>
             <h3>1.0.0</h3>
             <ul>
               <li>Import a Claude Design export (zip or folder) into an Android module as a Jetpack Compose design system.</li>
