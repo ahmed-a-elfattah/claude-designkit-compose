@@ -34,7 +34,7 @@
     <depends>org.jetbrains.android</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup id="Claude Design Importer" displayType="BALLOON"/>
+        <notificationGroup id="Claude DesignKit" displayType="BALLOON"/>
     </extensions>
 
     <actions>
