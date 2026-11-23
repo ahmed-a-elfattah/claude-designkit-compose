@@ -5,7 +5,7 @@ plugins {
 
 subprojects {
     group = "dev.designimporter"
-    version = "1.0.0"
+    version = "1.0.1"
 
     plugins.withId("org.jetbrains.kotlin.jvm") {
         extensions.configure<JavaPluginExtension> {
