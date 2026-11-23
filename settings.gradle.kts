@@ -12,5 +12,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "claude-design-importer"
+rootProject.name = "claude-designkit-compose"
 include(":core", ":tools", ":plugin")
