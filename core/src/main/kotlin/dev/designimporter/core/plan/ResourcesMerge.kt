@@ -5,10 +5,11 @@ package dev.designimporter.core.plan
  * so re-imports replace only that block and never the user's own entries.
  */
 object ResourcesMerge {
-    const val BEGIN = "<!-- Claude Design Importer: begin. Generated; edits between these markers are replaced on re-import -->"
-    const val END = "<!-- Claude Design Importer: end -->"
+    const val BEGIN = "<!-- Claude DesignKit: begin. Generated; edits between these markers are replaced on re-import -->"
+    const val END = "<!-- Claude DesignKit: end -->"
 
-    private val block = Regex("""[ \t]*<!-- Claude Design Importer: begin.*?-->.*?<!-- Claude Design Importer: end -->[ \t]*\r?\n?""", RegexOption.DOT_MATCHES_ALL)
+    /** Matches blocks with the current markers and with the "Claude Design Importer" markers of releases before 1.0.1. */
+    private val block = Regex("""[ \t]*<!-- Claude (?:DesignKit|Design Importer): begin.*?-->.*?<!-- Claude (?:DesignKit|Design Importer): end -->[ \t]*\r?\n?""", RegexOption.DOT_MATCHES_ALL)
 
     fun hasBlock(text: String) = block.containsMatchIn(text)
 
@@ -16,7 +17,11 @@ object ResourcesMerge {
     fun merge(existing: String?, body: String): String? {
         val section = "    $BEGIN\n$body    $END\n"
         if (existing == null) return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n$section</resources>\n"
-        if (hasBlock(existing)) return block.replaceFirst(existing, Regex.escapeReplacement(section))
+        if (hasBlock(existing)) {
+            // Replace the first block; drop any others (e.g. an old-marker block left beside a new one).
+            var first = true
+            return block.replace(existing) { if (first) { first = false; section } else "" }
+        }
         val text = existing.replace(Regex("<resources(\\s[^>]*)?/>")) { "<resources${it.groupValues[1]}>\n</resources>" }
         val close = text.lastIndexOf("</resources>")
         if (close < 0) return null
