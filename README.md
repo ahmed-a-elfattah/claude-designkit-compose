@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/36162-claude-designkit-for-compose)](https://plugins.jetbrains.com/plugin/36162-claude-designkit-for-compose)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
-<!-- TODO: demo GIF — export → import dialog → generated AppTheme running in an emulator -->
+![Tools › Re-import Claude Design System in Android Studio: the import preview with its Icons and Strings tabs, Import, then the generated AppTheme running on an emulator in light, dark and Arabic (RTL)](docs/demo.gif)
 
 ## Why
 
